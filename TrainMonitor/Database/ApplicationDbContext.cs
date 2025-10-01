@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TrainMonitor.Models;
-using TrainMonitor.Models.Train;
 
 namespace TrainMonitor.DataBase
 {

@@ -1,0 +1,8 @@
+services:
+  trainmonitor:
+    image: ${DOCKER_REGISTRY-}trainmonitor
+    build:
+      context: .
+      dockerfile: TrainMonitor/Dockerfile
+  trainmonitorDb:
+    image: mariadb:latest
