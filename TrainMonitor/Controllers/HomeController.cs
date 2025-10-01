@@ -1,22 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace TrainMonitor.Controllers
+namespace TrainMonitor.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+
+    /**
+     * HomePage
+     */
+    public IActionResult Index()
     {
-        public HomeController()
-        {
-
-        }
-
-        /**
-         * HomePage
-         */
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
+        return View();
     }
+
+
 }
