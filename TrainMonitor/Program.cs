@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TrainMonitor.DataBase;
+using TrainMonitor.Extensions;
+using TrainMonitor.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,16 +11,23 @@ builder.Services.AddControllersWithViews();
 // Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
+    var connectionStringHost = EnvironmentUtils.IsRunningInContainer() ? "MariaDBContainer" : "MariaDB";
+    var connectionString = builder.Configuration.GetConnectionString(connectionStringHost);
+
     options.UseMySql(
-        builder.Configuration.GetConnectionString("MariaDB"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MariaDB"))
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
     );
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    await app.ApplyMigrationAsync(); // applying migrations automatically
+}
+else
 {
     app.UseExceptionHandler("/Error/Error");
     app.UseHsts();
