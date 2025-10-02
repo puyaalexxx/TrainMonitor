@@ -1,11 +1,13 @@
 ﻿namespace TrainMonitor.ViewModels;
 
-public class TrainViewModel
+public sealed record TrainViewModel
 {
-    public int Id { get; set; }
-    public string TrainName { get; set; }
-    public string TrainNumber { get; set; }
-    public int DelayTime { get; set; }
-    public string NextStation { get; set; }
-    public bool HasIncidentHistory { get; set; }
+    public int Id { get; init; }
+    public required string TrainId { get; init; }
+    public required string TrainName { get; init; }
+    public required string TrainNumber { get; init; }
+    public int DelayTime { get; init; }
+    public required string LastUpdatedTime { get; init; }
+    public required string NextStation { get; init; }
+    public bool HasIncident { get; init; }
 }

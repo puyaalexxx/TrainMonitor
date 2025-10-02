@@ -8,12 +8,14 @@
 - Entity Framework Core for data access
 - Repository pattern for data access abstraction
 - Migrations to manage database schema changes
-- DTOs for data transfer
 - Tables configurations via IEntityTypeConfiguration
 - Fluent API for model configuration
-- Razor PAges for UI
+- Razor Pages for UI
 - MariaDB as the database
 - Loading data via a Json file
 - Bootstrap 5 for styling
 - FontAwesome for icons
 - CSS for styling
+- Json Deserialization with System.Text.Json
+- ViewModel for passing data to views
+- 

@@ -26,6 +26,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     await app.ApplyMigrationAsync(); // applying migrations automatically
+
+    app.UseDeveloperExceptionPage();
 }
 else
 {

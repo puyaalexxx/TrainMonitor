@@ -103,7 +103,15 @@ body {
     background-color: rgba(0, 0, 0, .05);
 }
 
+#train-table .bg-danger {
+    background-color: #8b3840 !important;
+}
+
 #train-table .row {
     margin-right: 0;
     margin-left: 0;
+}
+
+.top-header + .row.border-top {
+    border-top: 0px !important;
 }
