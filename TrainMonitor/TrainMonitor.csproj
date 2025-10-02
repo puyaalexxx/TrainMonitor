@@ -10,6 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="wwwroot\lib\fontawesome-free\**" />
+	  <Content Remove="wwwroot\lib\fontawesome-free\**" />
+	  <EmbeddedResource Remove="wwwroot\lib\fontawesome-free\**" />
+	  <None Remove="wwwroot\lib\fontawesome-free\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
 			<PrivateAssets>all</PrivateAssets>

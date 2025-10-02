@@ -14,3 +14,6 @@
 - Razor PAges for UI
 - MariaDB as the database
 - Loading data via a Json file
+- Bootstrap 5 for styling
+- FontAwesome for icons
+- CSS for styling

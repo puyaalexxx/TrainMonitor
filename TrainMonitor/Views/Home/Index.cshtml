@@ -2,6 +2,26 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome To TrainMonitor App</h1>
+<div class="row justify-content-center mt-5">
+
+    <div class="col-lg-8 hero-content text-center">
+
+        <h1 class="hero-title">Welcome To TrainMonitor App</h1>
+
+        <p class="hero-description">
+            Your space for keeping track of trains in real time.
+            Here you can see which trains are currently running, when and where they are scheduled to stop next, and whether they are delayed.
+        </p>
+
+        <p class="hero-description mb-5">
+            Trains with significant delays are clearly highlighted so you can spot them instantly.
+        </p>
+
+        <div class="hero-actions">
+            <a asp-controller="Train" asp-action="GetTrains" class="btn btn-primary">See Trains</a>
+            <a href="#" class="btn btn-outline">Incidents</a>
+        </div>
+
+    </div>
+
 </div>
