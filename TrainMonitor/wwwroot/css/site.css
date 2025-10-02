@@ -87,3 +87,23 @@ body {
         color: #0d6efd;
         transform: translateY(-3px);
     }
+
+.table .thead-dark th {
+    color: #fff;
+    background-color: #212529;
+    border-color: #32383e;
+}
+
+.bg-danger th, .bg-danger td {
+    background-color: #dc3545 !important;
+    color: #fff;
+}
+
+#train-table .bg-grey-light {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+#train-table .row {
+    margin-right: 0;
+    margin-left: 0;
+}
