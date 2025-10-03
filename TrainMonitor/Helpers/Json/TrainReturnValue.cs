@@ -18,7 +18,4 @@ public class TrainReturnValue
 
     [JsonPropertyName("nextStopObj")]
     public NextStop NextStop { get; set; } = default!;
-
-    // public DateTime DepartureTime { get; set; }
-    // public DateTime? ArrivalTime { get; set; }
 }

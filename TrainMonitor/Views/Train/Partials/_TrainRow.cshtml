@@ -1,9 +1,8 @@
 ﻿@model TrainViewModel
 
-<div class="col-1">@Model.Id</div>
-<div class="col-3">@Model.TrainName</div>
 <div class="col-2">@Model.TrainNumber</div>
-<div class="col-2">@((Model.DelayTime == 1) ? "1 min" : $"{Model.DelayTime} mins")</div>
+<div class="col-2">@Model.TrainName</div>
 <div class="col-2">@Model.NextStation</div>
+<div class="col-1">@((Model.DelayTime == 1) ? "1 min" : $"{Model.DelayTime} mins")</div>
 <div class="col-2">@Model.LastUpdatedTime</div>
 

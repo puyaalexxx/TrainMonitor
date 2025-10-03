@@ -115,3 +115,7 @@ body {
 .top-header + .row.border-top {
     border-top: 0px !important;
 }
+
+#train-table .row {
+    align-items: center;
+}

@@ -10,27 +10,42 @@
 <div id="train-table" class="border-bottom">
     <!-- Header -->
     <div class="top-header row bg-dark font-weight-bold py-2 text-white">
-        <div class="col-1">#</div>
-        <div class="col-3">Train Name</div>
         <div class="col-2">Train Number</div>
-        <div class="col-2">Delay Time</div>
+        <div class="col-2">Train Name</div>
         <div class="col-2">Next Station</div>
+        <div class="col-1">Delay Time</div>
         <div class="col-2">Last Update</div>
+        <div class="col-1">Incident</div>
+        <div class="col-2">Incidents</div>
     </div>
 
     <!-- Rows -->
     @foreach (var train in Model)
     {
-        @if (@train.HasIncident)
+        @if (@train.HasDelay)
         {
-            <a href="@Url.Action("GetIncidents", "Train", new { trainID = train.TrainId })" class="row py-2 text-decoration-none text-white bg-danger border-top">
+            <span class="row py-2 text-decoration-none text-white bg-danger border-top">
                 <partial name="Partials/_TrainRow" model="train" />
-            </a>
+
+                <div class="col-1">
+                    <a href="@Url.Action("AddIncident", "Train", new { trainID = train.TrainId })" class="btn btn-sm btn-dark">Add</a>
+                </div>
+
+                <div class="col-2">
+                    <a href="@Url.Action("GetIncidentHistory", "Train", new { trainID = train.TrainId })"
+                       class="btn btn-sm btn-danger" title="View Incident History">
+                        <i class="fas fa-bell"></i>
+                        View History
+                    </a>
+                </div>
+            </span>
         }
         else
         {
             <span class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
                 <partial name="Partials/_TrainRow" model="train" />
+                <div class="col-1"></div>
+                <div class="col-2"></div>
             </span>
 
         }

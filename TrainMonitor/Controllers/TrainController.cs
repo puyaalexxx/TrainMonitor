@@ -32,16 +32,15 @@ public class TrainController : Controller
 
         var trains = root?.Data
             .Where(t => t.ReturnValue != null)
-            .Select((t, index) => new TrainViewModel
+            .Select((t) => new TrainViewModel
             {
-                Id = index + 1,
                 TrainId = t.ReturnValue.TrainId,
                 TrainName = t.TrainName,
                 TrainNumber = t.ReturnValue.TrainNumber,
                 DelayTime = t.ReturnValue.DelayTime,
                 LastUpdatedTime = TrainUtils.LastUpdatedTimeConverstion(t),
                 NextStation = t.ReturnValue.NextStop?.Title ?? String.Empty,
-                HasIncident = t.ReturnValue.DelayTime > 10
+                HasDelay = t.ReturnValue.DelayTime > 10
             })
             //.Reverse()
             .ToList() ?? new List<TrainViewModel>();
@@ -53,7 +52,7 @@ public class TrainController : Controller
      * Returns incidents for a specific train.
      */
     [Route("{trainID}/incidents")]
-    public IActionResult GetIncidents(int trainID)
+    public IActionResult GetTrainIncidents(int trainID)
     {
         if (!ModelState.IsValid)
         {
