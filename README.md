@@ -16,6 +16,9 @@
 - Bootstrap 5 for styling
 - FontAwesome for icons
 - CSS for styling
+- Javascript for interactivity
+- jQuery for DOM manipulation and Form validation
+- Ajax for asynchronous requests
 - Json Deserialization with System.Text.Json
 - ViewModel for passing data to views
 - 

@@ -1,0 +1,42 @@
+﻿@model TrainViewModel
+
+@{
+    var trainID = @Model.TrainId;
+}
+
+
+<div class="modal fade add-incident-modal" id="add-incident-@trainID" data-train-id="@trainID">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <form id="add-incident-form-@trainID" class="text-black">
+                    <input type="hidden" name="trainID" value="@trainID">
+
+                    <div class="mb-3">
+                        <label @* asp-for="Username" *@ for="username-@trainID" class="col-form-label">Username:</label>
+                        <input @* asp-for="Username" *@ type="text" class="form-control" id="username-@trainID" name="username" autocomplete="on">
+                        @* <span asp-validation-for="Username" class="text-danger"></span> *@
+                    </div>
+                    <div class="mb-3">
+                        <label @* asp-for="Reason" *@ for="reason-@trainID" class="col-form-label">Reason:</label>
+                        <textarea @* asp-for="Reason" *@ class="form-control" id="reason-@trainID" name="reason"></textarea>
+                        @* <span asp-validation-for="Reason" class="text-danger"></span> *@
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment-@trainID" class="col-form-label">Additional Comment:</label>
+                        <textarea class="form-control" id="comment-@trainID" rows="4" name="comment"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="" type="button" class="btn btn-primary save-incident">
+                    <span class="spinner-border spinner-border-sm d-none"></span>
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

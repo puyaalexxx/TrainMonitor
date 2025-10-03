@@ -103,6 +103,10 @@ body {
     background-color: rgba(0, 0, 0, .05);
 }
 
+#train-table .btn {
+    box-shadow: none !important;
+}
+
 #train-table .bg-danger {
     background-color: #8b3840 !important;
 }

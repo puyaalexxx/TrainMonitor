@@ -24,11 +24,11 @@
     {
         @if (@train.HasDelay)
         {
-            <span class="row py-2 text-decoration-none text-white bg-danger border-top">
+            <div class="row py-2 text-decoration-none text-white bg-danger border-top">
                 <partial name="Partials/_TrainRow" model="train" />
 
                 <div class="col-1">
-                    <a href="@Url.Action("AddIncident", "Train", new { trainID = train.TrainId })" class="btn btn-sm btn-dark">Add</a>
+                    <button type="button" class="btn btn-sm btn-dark add-incident" data-bs-toggle="modal" data-bs-target="#add-incident-@train.TrainId">Add</button>
                 </div>
 
                 <div class="col-2">
@@ -38,15 +38,17 @@
                         View History
                     </a>
                 </div>
-            </span>
+
+                <partial name="Partials/_IncidentModal" model="train" />
+            </div>
         }
         else
         {
-            <span class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
+            <div class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
                 <partial name="Partials/_TrainRow" model="train" />
                 <div class="col-1"></div>
                 <div class="col-2"></div>
-            </span>
+            </div>
 
         }
     }

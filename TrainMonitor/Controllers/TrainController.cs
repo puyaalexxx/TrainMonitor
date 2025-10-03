@@ -64,4 +64,23 @@ public class TrainController : Controller
         return View("Incidents");
     }
 
+    [HttpPost]
+    public IActionResult AddIncident(AddIncidentViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest("Please fill all required fields.");
+
+        // Save to DB
+        /*context.Incidents.Add(new Incident
+        {
+            TrainId = model.TrainId,
+            Username = model.Username,
+            Reason = model.Reason,
+            Comment = model.Comment,
+        });
+
+        _context.SaveChanges();*/
+
+        return Ok(); // AJAX success
+    }
 }
