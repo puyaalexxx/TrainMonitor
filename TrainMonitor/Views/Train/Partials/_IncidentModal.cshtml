@@ -10,6 +10,9 @@
         <div class="modal-content">
 
             <div class="modal-body">
+
+                <div class="incident-success alert alert-success d-none"></div>
+
                 <form id="add-incident-form-@trainID" class="text-black" method="post">
                     <input type="hidden" name="trainID" value="@trainID">
 
@@ -27,11 +30,13 @@
                         <label for="comment-@trainID" class="col-form-label">Additional Comment:</label>
                         <textarea class="form-control" id="comment-@trainID" rows="4" name="Comment"></textarea>
                     </div>
+
+                    <span class="server-errors text-danger"></span>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="" type="button" class="btn btn-primary save-incident">
+                <button type="button" class="btn btn-primary save-incident">
                     <span class="spinner-border spinner-border-sm d-none"></span>
                     Save changes
                 </button>

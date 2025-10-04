@@ -43,7 +43,7 @@ public class TrainController : Controller
                 HasDelay = t.ReturnValue.DelayTime > 10
             })
             //.Reverse()
-            .ToList() ?? new List<TrainViewModel>();
+            .ToList() ?? [];
 
         return View("Trains", trains);
     }
@@ -69,7 +69,14 @@ public class TrainController : Controller
     public IActionResult AddIncident(AddIncidentViewModel model)
     {
         if (!ModelState.IsValid)
-            return BadRequest("Please fill all required fields.");
+        {
+            var errors = TrainUtils.CollectFormErrors(ModelState);
+
+            return Json(new { success = false, errors });
+        }
+        // return BadRequest("Please fill all required fields.");
+
+
 
         // Save to DB
         /*context.Incidents.Add(new Incident
@@ -82,6 +89,6 @@ public class TrainController : Controller
 
         _context.SaveChanges();*/
 
-        return Ok(); // AJAX success
+        return Ok(new { success = true, message = "Incident saved successfully!" }); // AJAX success
     }
 }

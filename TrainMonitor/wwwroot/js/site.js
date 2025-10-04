@@ -1,9 +1,8 @@
 ﻿//add incident
 jQuery(function ($) {
-    $('#train-table .save-incident').on('click', function () {
+    $('#train-table').on('click', '.save-incident', function () {
         const $thisButton = $(this);
         const $currentModal = $thisButton.closest('.add-incident-modal');
-        const currentModalID = $currentModal.data('train-id');
         const $form = $('#add-incident-form-' + $currentModal.data('train-id'));
 
         // Trigger unobtrusive validation
@@ -13,21 +12,33 @@ jQuery(function ($) {
         }
 
         $.ajax({
-            url: '/trains/addIncident', // controller/action - 
+            url: '/trains/addIncident',
             type: 'POST',
             data: $form.serialize(),
             beforeSend: function () {
+                $form.children('.server-errors').empty();
                 $thisButton.find('.spinner-border').removeClass('d-none');
             },
             success: function (response) {
 
-                console.log(response);
+                if (response.success) {
 
-                // Close modal
-                $('#add-incident').modal('hide');
+                    const $success = $form.prev('.incident-success');
+                    $success.text(response.message).removeClass('d-none');
 
-                // Optionally, show success message or update train row
-                console.log('Incident saved successfully!');
+                    setTimeout(() => {
+                        //hide success message
+                        $success.addClass('d-none');
+
+                        // Reset all fields in the form
+                        $form[0].reset();
+
+                        $currentModal.modal('hide');
+                    }, 2000);
+
+                } else if (response.errors) {
+                    $form.children('.server-errors').append(response.errors);
+                }
             },
             error: function (xhr) {
                 // Handle errors
@@ -37,5 +48,18 @@ jQuery(function ($) {
                 $thisButton.find('.spinner-border').addClass('d-none');
             }
         });
+    });
+
+    // Clear errors when modal is closed
+    $('#train-table').on('hidden.bs.modal', '.add-incident-modal', function () {
+        const $form = $(this).find('form');
+        $form.children('.server-errors').empty();
+
+        // 1. Clear server-side errors
+        $form.find('.server-errors').empty();
+
+        // 2. Clear unobtrusive validation errors from spans
+        $form.find('.field-validation-error').empty();
+        $form.find('.input-validation-error').removeClass('input-validation-error');
     });
 });

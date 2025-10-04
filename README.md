@@ -19,7 +19,7 @@
 - Javascript for interactivity
 - jQuery for DOM manipulation and Form validation
 - Ajax for asynchronous requests
-- jQuery UN
+- jQuery Unobtrusive Validation for unobtrusive client-side validation
 - Json Deserialization with System.Text.Json
 - ViewModel for passing data to views
 - 
