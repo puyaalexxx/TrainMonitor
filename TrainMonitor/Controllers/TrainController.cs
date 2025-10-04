@@ -20,13 +20,13 @@ public class TrainController : Controller
     /* GET /trains
      * Returns a list of trains with their details.
      */
-    public IActionResult GetTrains()
+    public async Task<IActionResult> GetTrains()
     {
         ViewBag.Title = "Trains";
 
         // Read JSON file
         string path = Path.Combine(_env.ContentRootPath, "Database", "Seed", "trains.json");
-        string json = System.IO.File.ReadAllText(path);
+        string json = await System.IO.File.ReadAllTextAsync(path);
 
         var root = JsonSerializer.Deserialize<Root>(json);
 
@@ -51,7 +51,7 @@ public class TrainController : Controller
     /* GET /trains/{trainID}/incidents
      * Returns incidents for a specific train.
      */
-    [Route("{trainID}/incidents")]
+    [HttpGet("{trainID}/incidents")]
     public IActionResult GetTrainIncidents(int trainID)
     {
         if (!ModelState.IsValid)
@@ -64,7 +64,8 @@ public class TrainController : Controller
         return View("Incidents");
     }
 
-    [HttpPost]
+    [HttpPost("addIncident")]
+    [ValidateAntiForgeryToken]
     public IActionResult AddIncident(AddIncidentViewModel model)
     {
         if (!ModelState.IsValid)

@@ -123,3 +123,7 @@ body {
 #train-table .row {
     align-items: center;
 }
+
+.form-control.input-validation-error {
+    border: 1px solid #dc3545;
+}

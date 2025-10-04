@@ -4,6 +4,9 @@ namespace TrainMonitor.ViewModels;
 
 public sealed record AddIncidentViewModel
 {
+    [Required]
+    public required string TrainId { get; init; }
+
     [Required(ErrorMessage = "Username is required")]
     [StringLength(50, ErrorMessage = "Username cannot be longer than 50 characters")]
     public string Username { get; init; } = string.Empty;

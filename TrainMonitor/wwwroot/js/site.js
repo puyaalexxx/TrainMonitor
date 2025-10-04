@@ -1,30 +1,30 @@
 ﻿//add incident
-$(document).ready(function () {
+jQuery(function ($) {
     $('#train-table .save-incident').on('click', function () {
         const $thisButton = $(this);
-        const currentModalID = $thisButton.closest('.add-incident-modal').data('train-id');
-        const $form = $('#add-incident-form-' + currentModalID);
-
+        const $currentModal = $thisButton.closest('.add-incident-modal');
+        const currentModalID = $currentModal.data('train-id');
+        const $form = $('#add-incident-form-' + $currentModal.data('train-id'));
 
         // Trigger unobtrusive validation
         if (!$form.valid()) {
+            $.validator.unobtrusive.parse($form);
             return; // form is invalid, do not continue
         }
 
-        const formData = $form.serialize();
-
-        console.log(formData);
-
         $.ajax({
-            url: '', // controller/action - /Train/AddIncident
+            url: '/trains/addIncident', // controller/action - 
             type: 'POST',
-            data: formData,
+            data: $form.serialize(),
             beforeSend: function () {
                 $thisButton.find('.spinner-border').removeClass('d-none');
             },
             success: function (response) {
+
+                console.log(response);
+
                 // Close modal
-                //$('#add-incident').modal('hide');
+                $('#add-incident').modal('hide');
 
                 // Optionally, show success message or update train row
                 console.log('Incident saved successfully!');
