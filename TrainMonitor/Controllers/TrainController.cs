@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TrainMonitor.DataBase;
+﻿// Ignore Spelling: env
+
+using Microsoft.AspNetCore.Mvc;
+using TrainMonitor.DTOs;
 using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers;
-using TrainMonitor.Models;
 using TrainMonitor.Services;
 using TrainMonitor.ViewModels;
 
@@ -21,9 +21,10 @@ public class TrainController : Controller
         _trainService = trainService;
     }
 
-    /* GET /trains
-     * Returns a list of trains with their details.
-     */
+    /// <summary>
+    /// Handles GET requests to "/trains" and returns a list of trains with their details.
+    /// </summary>
+    /// <returns>A view displaying the list of trains.</returns>
     public async Task<IActionResult> GetTrains()
     {
         ViewBag.Title = "Trains";
@@ -38,7 +39,7 @@ public class TrainController : Controller
                 TrainName = t.TrainName,
                 TrainNumber = t.ReturnValue.TrainNumber,
                 DelayTime = t.ReturnValue.DelayTime,
-                LastUpdatedTime = TrainUtils.LastUpdatedTimeConverstion(t),
+                LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
                 NextStation = t.ReturnValue.NextStop?.Title ?? String.Empty,
                 HasDelay = t.ReturnValue.DelayTime > 10,
                 HasIncident = false,
@@ -49,9 +50,11 @@ public class TrainController : Controller
         return View("Trains", trains);
     }
 
-    /* GET /trains/{trainID}/incidents
-     * Returns incidents for a specific train.
-     */
+    /// <summary>
+    /// Handles GET requests to "/trains/{trainID}/incidents" and returns incidents for a specific train.
+    /// </summary>
+    /// <param name="trainID">The ID of the train to retrieve incidents for.</param>
+    /// <returns>A view displaying the incidents for the specified train.</returns>
     [HttpGet("{trainID}/incidents")]
     public IActionResult GetTrainIncidents(int trainID)
     {
@@ -65,10 +68,12 @@ public class TrainController : Controller
         return View("Incidents");
     }
 
-    /* POST /trains/addIncident
-     * Create train if it does not exist
-     * Add a new incident for a train.
-     */
+    /// <summary>
+    /// Handles POST requests to "/trains/addIncident".
+    /// Creates the train if it does not exist and adds a new incident for the train.
+    /// </summary>
+    /// <param name="model">The <see cref="AddIncidentViewModel"/> containing the incident details submitted from the form.</param>
+    /// <returns>A JSON response indicating success or failure, along with any error messages.</returns>
     [HttpPost("addIncident")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddIncident(AddIncidentViewModel model)
@@ -86,20 +91,11 @@ public class TrainController : Controller
         if (train == null)
             return Json(new { success = false, message = $"Invalid Train ID: {model.TrainId}" });
 
+        //add incident to current train
+        await _trainService.AddIncidentAsync(model.ToDto());
 
-        // Add train incident
-        var incident = new Incident
-        {
-            Username = model.Username,
-            Reason = model.Reason,
-            AdditionalComment = model.Comment,
-            Train = train
-        };
-
-        _context.Incidents.Add(incident);
-
-        await _context.SaveChangesAsync();
-
+        // Commit all changes in one transaction
+        await _trainService.SaveChangesAsync();
 
         return Ok(new { success = true, message = "Incident saved successfully!" });
     }

@@ -1,8 +1,13 @@
-﻿using TrainMonitor.Models;
+﻿using TrainMonitor.DTOs;
+using TrainMonitor.Models;
 
 namespace TrainMonitor.Services;
 
 public interface ITrainService
 {
     Task<Train?> GetOrCreateTrainAsync(string trainId);
+
+    Task AddIncidentAsync(AddIncidentDto dto);
+
+    Task SaveChangesAsync();
 }

@@ -2,7 +2,7 @@
 
 public sealed class Train
 {
-    public string Id { get; set; }
+    public required string Id { get; set; }
     public required string TrainName { get; set; }
     public required string TrainNumber { get; set; }
     //arrivingTime

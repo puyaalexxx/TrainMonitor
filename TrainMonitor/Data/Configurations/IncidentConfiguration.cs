@@ -21,6 +21,11 @@ public class IncidentConfiguration : IEntityTypeConfiguration<Incident>
         builder.Property(i => i.AdditionalComment)
             .IsRequired(false);
 
+        // Foreign key relation to Train
+        builder.Property(i => i.TrainId)
+               .HasColumnType("varchar(255)")
+               .IsRequired();
+
         //relationship with Train (one to many)
         builder.HasOne(i => i.Train)
             .WithMany(t => t.Incidents)

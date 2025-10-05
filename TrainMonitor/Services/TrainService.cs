@@ -1,4 +1,7 @@
-﻿using TrainMonitor.Data.Repositories;
+﻿// Ignore Spelling: env dto
+
+using TrainMonitor.Data.Repositories;
+using TrainMonitor.DTOs;
 using TrainMonitor.Helpers;
 using TrainMonitor.Models;
 
@@ -15,11 +18,15 @@ public sealed class TrainService : ITrainService
         _env = env;
     }
 
-    /*
-     * Check if trainId exists already in DB
-     * If it does not exist, verify if trainId exists in the JSON file
-     * If the trainId exists in the JSON file, save the train data to DB
-     */
+    /// <summary>
+    /// Checks if a train with the specified <paramref name="trainId"/> exists in the database.
+    /// If it does not exist, verifies if the trainId exists in the JSON file.
+    /// If found in the JSON file, saves the train data to the database.
+    /// </summary>
+    /// <param name="trainId">The ID of the train to retrieve or create.</param>
+    /// <returns>
+    /// The existing or newly created <see cref="Train"/> object, or <c>null</c> if the trainId does not exist in the JSON file.
+    /// </returns>
     public async Task<Train?> GetOrCreateTrainAsync(string trainId)
     {
         //check if train exists in DB
@@ -36,4 +43,24 @@ public sealed class TrainService : ITrainService
 
         return trainData;
     }
+
+    /// <summary>
+    /// Adds an incident to a specific train.
+    /// </summary>
+    /// <param name="dto">The incident details to be added.</param>
+    public async Task AddIncidentAsync(AddIncidentDto dto)
+    {
+        var incident = new Incident
+        {
+            TrainId = dto.TrainId,
+            Username = dto.Username,
+            Reason = dto.Reason,
+            AdditionalComment = dto.Comment
+        };
+
+        await _trainRepository.AddIncidentAsync(incident);
+    }
+
+    public Task SaveChangesAsync() => _trainRepository.SaveChangesAsync();
+
 }

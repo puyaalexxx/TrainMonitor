@@ -10,6 +10,11 @@ public class TrainConfiguration : IEntityTypeConfiguration<Train>
         // Table name
         builder.ToTable("trains");
 
+        // Configure PK property first
+        builder.Property(t => t.Id)
+               .HasColumnType("varchar(255)")
+               .IsRequired();
+
         // Primary Key
         builder.HasKey(t => t.Id);
 

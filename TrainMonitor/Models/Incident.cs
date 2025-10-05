@@ -8,9 +8,8 @@ public sealed class Incident
 
     public string? AdditionalComment { get; set; }
 
-
     // Foreign Key
-    public int TrainId { get; set; }
+    public required string TrainId { get; set; }
     // Navigation Property
     public Train Train { get; set; } = default!;
 }
