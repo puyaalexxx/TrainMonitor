@@ -24,11 +24,5 @@ public class TrainConfiguration : IEntityTypeConfiguration<Train>
 
         builder.Property(t => t.DelayTime)
             .IsRequired();
-
-        builder.Property(t => t.DepartureTime)
-            .IsRequired();
-
-        builder.Property(t => t.ArrivalTime)
-            .IsRequired(false);
     }
 }

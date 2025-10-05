@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using TrainMonitor.DataBase;
 using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers;
-using TrainMonitor.Helpers.Json;
+using TrainMonitor.Models;
 using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.Controllers;
@@ -11,10 +12,12 @@ namespace TrainMonitor.Controllers;
 public class TrainController : Controller
 {
     private readonly IWebHostEnvironment _env;
+    private readonly ApplicationDbContext _context;
 
-    public TrainController(IWebHostEnvironment env)
+    public TrainController(ApplicationDbContext context, IWebHostEnvironment env)
     {
         _env = env;
+        _context = context;
     }
 
     /* GET /trains
@@ -24,11 +27,7 @@ public class TrainController : Controller
     {
         ViewBag.Title = "Trains";
 
-        // Read JSON file
-        string path = Path.Combine(_env.ContentRootPath, "Database", "Seed", "trains.json");
-        string json = await System.IO.File.ReadAllTextAsync(path);
-
-        var root = JsonSerializer.Deserialize<Root>(json);
+        var root = await TrainUtils.LoadTrainsFromJsonFileAsync(_env);
 
         var trains = root?.Data
             .Where(t => t.ReturnValue != null)
@@ -65,9 +64,15 @@ public class TrainController : Controller
         return View("Incidents");
     }
 
+    /* POST /trains/addIncident
+     * Check form data for TrainId and see if it exists already in DB
+     * If it does not exist, verify if TrainId exists in the JSON file
+     * If the TrainId exists in the JSON file, save the train data to DB
+     * and then add the train incident
+     */
     [HttpPost("addIncident")]
     [ValidateAntiForgeryToken]
-    public IActionResult AddIncident(AddIncidentViewModel model)
+    public async Task<IActionResult> AddIncident(AddIncidentViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -75,21 +80,29 @@ public class TrainController : Controller
 
             return Json(new { success = false, errors });
         }
-        // return BadRequest("Please fill all required fields.");
+
+        // Check if train exists in DB, if not create it
+        var train = await TrainUtils.GetOrCreateTrainAsync(model.TrainId, _context, _env);
+
+        if (train == null)
+            return Json(new { success = false, message = $"Invalid Train ID: {model.TrainId}" });
 
 
-
-        // Save to DB
-        /*context.Incidents.Add(new Incident
+        // Add train incident
+        var incident = new Incident
         {
-            TrainId = model.TrainId,
             Username = model.Username,
             Reason = model.Reason,
-            Comment = model.Comment,
-        });
+            AdditionalComment = model.Comment,
+            Train = train
+        };
 
-        _context.SaveChanges();*/
+        _context.Incidents.Add(incident);
 
-        return Ok(new { success = true, message = "Incident saved successfully!" }); // AJAX success
+        await _context.SaveChangesAsync();
+
+
+        return Ok(new { success = true, message = "Incident saved successfully!" });
     }
+
 }

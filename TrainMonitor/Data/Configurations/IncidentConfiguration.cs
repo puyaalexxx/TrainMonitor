@@ -12,9 +12,6 @@ public class IncidentConfiguration : IEntityTypeConfiguration<Incident>
 
         builder.HasKey(i => i.Id);
 
-        builder.Property(i => i.TrainNumber)
-            .IsRequired();
-
         builder.Property(i => i.Username)
             .IsRequired();
 
