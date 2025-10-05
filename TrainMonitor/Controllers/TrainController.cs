@@ -4,6 +4,7 @@ using TrainMonitor.DataBase;
 using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers;
 using TrainMonitor.Models;
+using TrainMonitor.Services;
 using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.Controllers;
@@ -12,12 +13,12 @@ namespace TrainMonitor.Controllers;
 public class TrainController : Controller
 {
     private readonly IWebHostEnvironment _env;
-    private readonly ApplicationDbContext _context;
+    private readonly TrainService _trainService;
 
-    public TrainController(ApplicationDbContext context, IWebHostEnvironment env)
+    public TrainController(TrainService trainService, IWebHostEnvironment env)
     {
         _env = env;
-        _context = context;
+        _trainService = trainService;
     }
 
     /* GET /trains
@@ -65,10 +66,8 @@ public class TrainController : Controller
     }
 
     /* POST /trains/addIncident
-     * Check form data for TrainId and see if it exists already in DB
-     * If it does not exist, verify if TrainId exists in the JSON file
-     * If the TrainId exists in the JSON file, save the train data to DB
-     * and then add the train incident
+     * Create train if it does not exist
+     * Add a new incident for a train.
      */
     [HttpPost("addIncident")]
     [ValidateAntiForgeryToken]
@@ -82,7 +81,7 @@ public class TrainController : Controller
         }
 
         // Check if train exists in DB, if not create it
-        var train = await TrainUtils.GetOrCreateTrainAsync(model.TrainId, _context, _env);
+        var train = await _trainService.GetOrCreateTrainAsync(model.TrainId);
 
         if (train == null)
             return Json(new { success = false, message = $"Invalid Train ID: {model.TrainId}" });

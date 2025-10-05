@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using TrainMonitor.DataBase;
-using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
 
@@ -74,22 +71,4 @@ public static class TrainUtils
             DelayTime = trainData.ReturnValue.DelayTime
         };
     }
-
-    public static async Task<Train?> GetOrCreateTrainAsync(string trainId, ApplicationDbContext context, IWebHostEnvironment env)
-    {
-        //check if train exists in DB
-        var train = await context.Trains.FirstOrDefaultAsync(t => t.Id == trainId);
-
-        if (train != null) return train;
-
-        //if not, get train data from JSON and add to DB
-        var trainData = await TrainUtils.GetTrainDataFromJsonAsync(trainId, env);
-
-        if (trainData == null) return null;
-
-        await context.Trains.AddAsync(trainData);
-
-        return trainData;
-    }
-
 }
