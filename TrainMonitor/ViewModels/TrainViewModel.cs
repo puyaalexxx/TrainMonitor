@@ -9,4 +9,5 @@ public sealed record TrainViewModel
     public required string LastUpdatedTime { get; init; }
     public required string NextStation { get; init; }
     public bool HasDelay { get; init; }
+    public bool HasIncident { get; init; }
 }

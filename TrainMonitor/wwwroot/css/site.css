@@ -121,3 +121,7 @@ body {
 .form-control.input-validation-error {
     border: 1px solid #dc3545;
 }
+
+#train-table .btn.btn-no-incidents {
+    pointer-events: none;
+}

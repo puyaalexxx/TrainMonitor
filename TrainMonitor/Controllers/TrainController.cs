@@ -40,7 +40,8 @@ public class TrainController : Controller
                 DelayTime = t.ReturnValue.DelayTime,
                 LastUpdatedTime = TrainUtils.LastUpdatedTimeConverstion(t),
                 NextStation = t.ReturnValue.NextStop?.Title ?? String.Empty,
-                HasDelay = t.ReturnValue.DelayTime > 10
+                HasDelay = t.ReturnValue.DelayTime > 10,
+                HasIncident = false,
             })
             //.Reverse()
             .ToList() ?? [];

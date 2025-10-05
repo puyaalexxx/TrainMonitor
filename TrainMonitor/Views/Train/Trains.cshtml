@@ -32,11 +32,21 @@
                 </div>
 
                 <div class="col-2">
-                    <a href="@Url.Action("GetIncidentHistory", "Train", new { trainID = train.TrainId })"
-                       class="btn btn-sm btn-danger" title="View Incident History">
-                        <i class="fas fa-bell"></i>
-                        View History
-                    </a>
+                    @if (@train.HasIncident)
+                    {
+                        <a href="@Url.Action("GetTrainIncidents", "Train", new { trainID = train.TrainId })"
+                           class="btn btn-sm btn-danger" title="View Incident History">
+                            <i class="fas fa-bell"></i>
+                            View History
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="btn btn-sm btn-dark btn-no-incidents" title="No Incident History">
+                            <i class="fas fa-bell-slash"></i>
+                            No History
+                        </span>
+                    }
                 </div>
 
                 <partial name="Partials/_IncidentModal" model="new AddIncidentViewModel { TrainId = train.TrainId }" />

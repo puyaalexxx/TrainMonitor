@@ -55,10 +55,10 @@ jQuery(function ($) {
         const $form = $(this).find('form');
         $form.children('.server-errors').empty();
 
-        // 1. Clear server-side errors
+        // Clear server-side errors
         $form.find('.server-errors').empty();
 
-        // 2. Clear unobtrusive validation errors from spans
+        // Clear unobtrusive validation errors from spans
         $form.find('.field-validation-error').empty();
         $form.find('.input-validation-error').removeClass('input-validation-error');
     });
