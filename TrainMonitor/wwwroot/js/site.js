@@ -11,6 +11,9 @@ jQuery(function ($) {
             return; // form is invalid, do not continue
         }
 
+        // disable button to avoid double submissions
+        $thisButton.prop('disabled', true);
+
         $.ajax({
             url: '/trains/addIncident',
             type: 'POST',
@@ -46,6 +49,7 @@ jQuery(function ($) {
             },
             complete: function () {
                 $thisButton.find('.spinner-border').addClass('d-none');
+                $thisButton.prop('disabled', false);
             }
         });
     });

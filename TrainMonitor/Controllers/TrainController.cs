@@ -89,7 +89,7 @@ public class TrainController : Controller
         var train = await _trainService.GetOrCreateTrainAsync(model.TrainId);
 
         if (train == null)
-            return Json(new { success = false, message = $"Invalid Train ID: {model.TrainId}" });
+            return Json(new { success = false, errors = $"Invalid Train ID: {model.TrainId}" });
 
         //add incident to current train
         await _trainService.AddIncidentAsync(model.ToDto());

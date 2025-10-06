@@ -14,7 +14,7 @@
 - Fluent API for model configuration
 - Razor Pages for UI
 - MariaDB as the database
-- Loading data via a JSon file
+- Loading data via a JSON file
 - Bootstrap 5 for styling
 - FontAwesome for icons
 - CSS for styling
@@ -22,6 +22,6 @@
 - jQuery for DOM manipulation and Form validation
 - Ajax for asynchronous requests
 - jQuery Unobtrusive Validation for client-side validation
-- JSon Deserialization with System.Text.Json
+- JSON Deserialization with System.Text.Json
 - ViewModel for passing data to views
 - DTOs for data transfer between layers
