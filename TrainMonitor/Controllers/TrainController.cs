@@ -24,12 +24,13 @@ public class TrainController : Controller
     /// <summary>
     /// Handles GET requests to "/trains" and returns a list of trains with their details.
     /// </summary>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A view displaying the list of trains.</returns>
-    public async Task<IActionResult> GetTrains()
+    public async Task<IActionResult> GetTrains(CancellationToken cancellationToken)
     {
         ViewBag.Title = "Trains";
 
-        var root = await TrainUtils.LoadTrainsFromJsonFileAsync(_env);
+        var root = await TrainUtils.LoadTrainsFromJsonFileAsync(_env, cancellationToken);
 
         var trains = root?.Data
             .Where(t => t.ReturnValue != null)
@@ -54,9 +55,10 @@ public class TrainController : Controller
     /// Handles GET requests to "/trains/{trainID}/incidents" and returns incidents for a specific train.
     /// </summary>
     /// <param name="trainID">The ID of the train to retrieve incidents for.</param>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A view displaying the incidents for the specified train.</returns>
     [HttpGet("{trainID}/incidents")]
-    public IActionResult GetTrainIncidents(int trainID)
+    public IActionResult GetTrainIncidents(int trainID, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -73,10 +75,11 @@ public class TrainController : Controller
     /// Creates the train if it does not exist and adds a new incident for the train.
     /// </summary>
     /// <param name="model">The <see cref="AddIncidentViewModel"/> containing the incident details submitted from the form.</param>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A JSON response indicating success or failure, along with any error messages.</returns>
     [HttpPost("addIncident")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddIncident(AddIncidentViewModel model)
+    public async Task<IActionResult> AddIncident(AddIncidentViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -86,16 +89,16 @@ public class TrainController : Controller
         }
 
         // Check if train exists in DB, if not create it
-        var train = await _trainService.GetOrCreateTrainAsync(model.TrainId);
+        var train = await _trainService.GetOrCreateTrainAsync(model.TrainId, cancellationToken);
 
         if (train == null)
             return Json(new { success = false, errors = $"Invalid Train ID: {model.TrainId}" });
 
         //add incident to current train
-        await _trainService.AddIncidentAsync(model.ToDto());
+        await _trainService.AddIncidentAsync(model.ToDto(), cancellationToken);
 
         // Commit all changes in one transaction
-        await _trainService.SaveChangesAsync();
+        await _trainService.SaveChangesAsync(cancellationToken);
 
         return Ok(new { success = true, message = "Incident saved successfully!" });
     }

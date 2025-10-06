@@ -51,11 +51,13 @@ public static class TrainUtils
     /// Returns a <see cref="Root"/> object deserialized from the JSON content, or <c>null</c> if deserialization fails.
     /// </summary>
     /// <param name="env">The <see cref="IWebHostEnvironment"/> used to locate the content root path.</param>
-    /// <returns>A <see cref="Task{Root}"/> representing the asynchronous operation, containing the deserialized <see cref="Root"/> object or <c>null</c>.</returns>
-    public static async Task<Root?> LoadTrainsFromJsonFileAsync(IWebHostEnvironment env)
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
+    /// <returns>A <see cref="Task{Root}"/> representing the asynchronous operation, containing the deserialized 
+    /// <see cref="Root"/> object or <c>null</c>.</returns>
+    public static async Task<Root?> LoadTrainsFromJsonFileAsync(IWebHostEnvironment env, CancellationToken cancellationToken = default)
     {
         string path = Path.Combine(env.ContentRootPath, "Data", "Seed", "trains.json");
-        string json = await System.IO.File.ReadAllTextAsync(path);
+        string json = await System.IO.File.ReadAllTextAsync(path, cancellationToken);
 
         return JsonSerializer.Deserialize<Root>(json);
     }
@@ -66,10 +68,12 @@ public static class TrainUtils
     /// </summary>
     /// <param name="trainId">The ID of the train to retrieve.</param>
     /// <param name="env">The <see cref="IWebHostEnvironment"/> used to locate the content root path.</param>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A <see cref="Task{Train}"/> <see cref="Train"/> object if found, or <c>null</c>.</returns>
-    public static async Task<Train?> GetTrainDataFromJsonAsync(string trainId, IWebHostEnvironment env)
+    public static async Task<Train?> GetTrainDataFromJsonAsync(string trainId, IWebHostEnvironment env, CancellationToken cancellationToken = default)
     {
-        var root = await LoadTrainsFromJsonFileAsync(env);
+        var root = await LoadTrainsFromJsonFileAsync(env, cancellationToken);
+
         var trainData = root?.Data.FirstOrDefault(t => t.ReturnValue?.TrainId == trainId);
 
         if (trainData == null) return null;

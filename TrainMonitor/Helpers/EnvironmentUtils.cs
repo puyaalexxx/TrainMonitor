@@ -1,4 +1,6 @@
-﻿namespace TrainMonitor.Helpers;
+﻿// Ignore Spelling: Utils
+
+namespace TrainMonitor.Helpers;
 
 public static class EnvironmentUtils
 {

@@ -5,9 +5,9 @@ namespace TrainMonitor.Services;
 
 public interface ITrainService
 {
-    Task<Train?> GetOrCreateTrainAsync(string trainId);
+    Task<Train?> GetOrCreateTrainAsync(string trainId, CancellationToken cancellationToken = default);
 
-    Task AddIncidentAsync(AddIncidentDto dto);
+    Task AddIncidentAsync(AddIncidentDto dto, CancellationToken cancellationToken = default);
 
-    Task SaveChangesAsync();
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
