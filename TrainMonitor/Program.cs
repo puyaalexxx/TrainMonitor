@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using TrainMonitor.Data.Repositories;
 using TrainMonitor.DataBase;
 using TrainMonitor.Extensions;
 using TrainMonitor.Helpers;
+using TrainMonitor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//DI
+builder.Services.AddScoped<ITrainRepository, TrainRepository>();
+builder.Services.AddScoped<ITrainService, TrainService>();
 
 // Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

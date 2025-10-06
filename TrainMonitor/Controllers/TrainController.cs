@@ -13,9 +13,9 @@ namespace TrainMonitor.Controllers;
 public class TrainController : Controller
 {
     private readonly IWebHostEnvironment _env;
-    private readonly TrainService _trainService;
+    private readonly ITrainService _trainService;
 
-    public TrainController(TrainService trainService, IWebHostEnvironment env)
+    public TrainController(ITrainService trainService, IWebHostEnvironment env)
     {
         _env = env;
         _trainService = trainService;

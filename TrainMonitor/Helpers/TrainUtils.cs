@@ -54,7 +54,7 @@ public static class TrainUtils
     /// <returns>A <see cref="Task{Root}"/> representing the asynchronous operation, containing the deserialized <see cref="Root"/> object or <c>null</c>.</returns>
     public static async Task<Root?> LoadTrainsFromJsonFileAsync(IWebHostEnvironment env)
     {
-        string path = Path.Combine(env.ContentRootPath, "Database", "Seed", "trains.json");
+        string path = Path.Combine(env.ContentRootPath, "Data", "Seed", "trains.json");
         string json = await System.IO.File.ReadAllTextAsync(path);
 
         return JsonSerializer.Deserialize<Root>(json);

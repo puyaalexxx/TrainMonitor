@@ -61,6 +61,11 @@ public sealed class TrainService : ITrainService
         await _trainRepository.AddIncidentAsync(incident);
     }
 
+    /// <summary>
+    /// Commits all pending changes made via the service to the database.
+    /// This acts as a Unit of Work, ensuring multiple operations are saved in a single transaction.
+    /// </summary>
+    /// <returns></returns>
     public Task SaveChangesAsync() => _trainRepository.SaveChangesAsync();
 
 }
