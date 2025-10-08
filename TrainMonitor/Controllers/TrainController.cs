@@ -30,31 +30,15 @@ public class TrainController : Controller
     {
         ViewBag.Title = "Trains";
 
-        var root = await TrainUtils.LoadTrainsFromJsonFileAsync(_env, cancellationToken);
+        var trainData = await TrainUtils.LoadTrainsDataFromJsonFileAsync(_env, cancellationToken);
 
-        // grab all train ids from the JSON collection
-        var trainIds = root?.Data
-            .Where(t => t.ReturnValue != null)
-            .Select(t => t.ReturnValue.TrainId)
-            .ToList() ?? [];
+        //get train ids
+        var trainIds = TrainUtils.GetAllTrainIdsFromJson(trainData);
 
+        // get trains that have incidents
         var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
 
-        // create trains list with all trains (setting the HasIncident  )
-        var trains = root?.Data
-            .Where(t => t.ReturnValue != null)
-            .Select(t => new TrainViewModel
-            {
-                TrainId = t.ReturnValue.TrainId,
-                TrainName = t.TrainName,
-                TrainNumber = t.ReturnValue.TrainNumber,
-                DelayTime = t.ReturnValue.DelayTime,
-                LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
-                NextStation = t.ReturnValue.NextStop?.Title ?? string.Empty,
-                HasDelay = t.ReturnValue.DelayTime > 10,
-                HasIncident = incidentTrainIdsSet.Contains(t.ReturnValue.TrainId)
-            })
-            .ToList() ?? [];
+        var trains = _trainService.GetTrains(trainData, incidentTrainIdsSet);
 
         return View("Trains", trains);
     }

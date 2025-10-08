@@ -47,19 +47,22 @@ public static class TrainUtils
     }
 
     /// <summary>
-    /// Asynchronously loads train data from a JSON file located at "Database/Seed/trains.json" path.
-    /// Returns a <see cref="Root"/> object deserialized from the JSON content, or <c>null</c> if deserialization fails.
+    /// Asynchronously loads the train data from a JSON file located at "Data/Seed/trains.json".
     /// </summary>
     /// <param name="env">The <see cref="IWebHostEnvironment"/> used to locate the content root path.</param>
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
-    /// <returns>A <see cref="Task{Root}"/> representing the asynchronous operation, containing the deserialized 
-    /// <see cref="Root"/> object or <c>null</c>.</returns>
-    public static async Task<Root?> LoadTrainsFromJsonFileAsync(IWebHostEnvironment env, CancellationToken cancellationToken = default)
+    /// <returns>
+    /// A List of <see cref="TrainJson"/> representing the asynchronous operation,
+    /// containing the list of deserialized train data. If the file is empty, invalid, or deserialization fails, an empty list is returned.
+    /// </returns>
+    public static async Task<List<TrainJson>> LoadTrainsDataFromJsonFileAsync(IWebHostEnvironment env, CancellationToken cancellationToken = default)
     {
         string path = Path.Combine(env.ContentRootPath, "Data", "Seed", "trains.json");
-        string json = await System.IO.File.ReadAllTextAsync(path, cancellationToken);
+        string json = await File.ReadAllTextAsync(path, cancellationToken);
 
-        return JsonSerializer.Deserialize<Root>(json);
+        var root = JsonSerializer.Deserialize<Root>(json);
+
+        return root?.Data ?? [];
     }
 
     /// <summary>
@@ -69,12 +72,13 @@ public static class TrainUtils
     /// <param name="trainId">The ID of the train to retrieve.</param>
     /// <param name="env">The <see cref="IWebHostEnvironment"/> used to locate the content root path.</param>
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
-    /// <returns>A <see cref="Task{Train}"/> <see cref="Train"/> object if found, or <c>null</c>.</returns>
+    /// <returns>A <see cref="Train"/> object if found, or <c>null</c> if the train ID does not exist in the JSON data.</returns>
     public static async Task<Train?> GetTrainDataFromJsonAsync(string trainId, IWebHostEnvironment env, CancellationToken cancellationToken = default)
     {
-        var root = await LoadTrainsFromJsonFileAsync(env, cancellationToken);
+        var trains = await LoadTrainsDataFromJsonFileAsync(env, cancellationToken);
 
-        var trainData = root?.Data.FirstOrDefault(t => t.ReturnValue?.TrainId == trainId);
+        //check if the trainId exists in the JSON data
+        var trainData = trains.FirstOrDefault(t => t.ReturnValue?.TrainId == trainId);
 
         if (trainData == null) return null;
 
@@ -85,5 +89,18 @@ public static class TrainUtils
             TrainNumber = trainData.ReturnValue.TrainNumber,
             DelayTime = trainData.ReturnValue.DelayTime
         };
+    }
+
+    /// <summary>
+    /// Extracts all TrainIds from the provided trainData List of objects.
+    /// </summary>
+    /// <param name="trainData">A List of train data objects</param>
+    /// <returns>A list of TrainIds. Returns an empty list if the root or data is null.</returns>
+    public static List<string> GetAllTrainIdsFromJson(List<TrainJson> trainData)
+    {
+        return trainData
+            .Where(t => t.ReturnValue != null)
+            .Select(t => t.ReturnValue.TrainId)
+            .ToList();
     }
 }

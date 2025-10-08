@@ -1,10 +1,20 @@
 ﻿using TrainMonitor.DTOs;
+using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
+using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.Services;
 
 public interface ITrainService
 {
+    /// <summary>
+    /// Builds a list of TrainViewModel trains from JSON data and incident IDs.
+    /// </summary>
+    /// <param name="trainData">A List of train data objects</param>
+    /// <param name="incidentTrainIdsSet">A set of TrainIds that have incidents saved into DB.</param>
+    /// <returns>List of TrainViewModel trains.</returns>
+    List<TrainViewModel> GetTrains(List<TrainJson> trainData, HashSet<string> incidentTrainIdsSet);
+
     /// <summary>
     /// Retrieves the IDs of trains that have at least one saved incident from the provided list of train IDs.
     /// </summary>
@@ -12,7 +22,7 @@ public interface ITrainService
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>
     /// A collection of train IDs that have at least one incident saved in the database. 
-    /// Returns an empty collection if no matching incidents are found or if <paramref name="trainIds"/> is null or empty.
+    /// Returns an empty collection if no matching incidents are found or if <paramref name="trainIds"/> is empty.
     /// </returns>
     Task<IEnumerable<string>> GetTrainIdsWithIncidentsAsync(IEnumerable<string> trainIds, CancellationToken cancellationToken = default);
 

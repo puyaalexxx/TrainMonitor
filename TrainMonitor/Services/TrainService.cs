@@ -3,7 +3,9 @@
 using TrainMonitor.Data.Repositories;
 using TrainMonitor.DTOs;
 using TrainMonitor.Helpers;
+using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
+using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.Services;
 
@@ -18,9 +20,27 @@ public sealed class TrainService : ITrainService
         _env = env;
     }
 
+    public List<TrainViewModel> GetTrains(List<TrainJson> trainData, HashSet<string> incidentTrainIdsSet)
+    {
+        return trainData
+            .Where(t => t.ReturnValue != null)
+            .Select(t => new TrainViewModel
+            {
+                TrainId = t.ReturnValue.TrainId,
+                TrainName = t.TrainName,
+                TrainNumber = t.ReturnValue.TrainNumber,
+                DelayTime = t.ReturnValue.DelayTime,
+                LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
+                NextStation = t.ReturnValue.NextStop?.Title ?? string.Empty,
+                HasDelay = t.ReturnValue.DelayTime > 10, // check delay time to be bigger than 10 minutes
+                HasIncident = incidentTrainIdsSet.Contains(t.ReturnValue.TrainId) // check if the train has incident saved in the database
+            })
+            .ToList();
+    }
+
     public async Task<IEnumerable<string>> GetTrainIdsWithIncidentsAsync(IEnumerable<string> trainIds, CancellationToken cancellationToken = default)
     {
-        if (trainIds == null || !trainIds.Any()) return [];
+        if (!trainIds.Any()) return [];
 
         var incidentTrainIds = await _trainRepository.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken);
 
