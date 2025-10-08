@@ -32,20 +32,28 @@ public class TrainController : Controller
 
         var root = await TrainUtils.LoadTrainsFromJsonFileAsync(_env, cancellationToken);
 
+        // grab all train ids from the JSON collection
+        var trainIds = root?.Data
+            .Where(t => t.ReturnValue != null)
+            .Select(t => t.ReturnValue.TrainId)
+            .ToList() ?? [];
+
+        var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
+
+        // create trains list with all trains (setting the HasIncident  )
         var trains = root?.Data
             .Where(t => t.ReturnValue != null)
-            .Select((t) => new TrainViewModel
+            .Select(t => new TrainViewModel
             {
                 TrainId = t.ReturnValue.TrainId,
                 TrainName = t.TrainName,
                 TrainNumber = t.ReturnValue.TrainNumber,
                 DelayTime = t.ReturnValue.DelayTime,
                 LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
-                NextStation = t.ReturnValue.NextStop?.Title ?? String.Empty,
+                NextStation = t.ReturnValue.NextStop?.Title ?? string.Empty,
                 HasDelay = t.ReturnValue.DelayTime > 10,
-                HasIncident = false,
+                HasIncident = incidentTrainIdsSet.Contains(t.ReturnValue.TrainId)
             })
-            //.Reverse()
             .ToList() ?? [];
 
         return View("Trains", trains);
@@ -58,7 +66,7 @@ public class TrainController : Controller
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A view displaying the incidents for the specified train.</returns>
     [HttpGet("{trainID}/incidents")]
-    public IActionResult GetTrainIncidents(int trainID, CancellationToken cancellationToken)
+    public IActionResult GetTrainIncidents(string trainID, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
