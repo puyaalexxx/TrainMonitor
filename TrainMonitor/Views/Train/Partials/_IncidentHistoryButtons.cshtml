@@ -1,0 +1,16 @@
+﻿@model TrainViewModel
+
+<a id="btn-view-history-@Model.TrainId"
+   href="@Url.Action("GetTrainIncidents", "Train", new { trainID = @Model.TrainId })"
+   class="btn btn-sm btn-danger btn-view-history @(@Model.HasIncident ? "" : "d-none")"
+   title="View Incident History">
+    <i class="fas fa-bell"></i>
+    View History
+</a>
+
+<span id="btn-no-incidents-@Model.TrainId"
+      class="btn btn-sm btn-dark btn-no-incidents @(@Model.HasIncident ? "d-none" : "")"
+      title="No Incident History">
+    <i class="fas fa-bell-slash"></i>
+    No History
+</span>

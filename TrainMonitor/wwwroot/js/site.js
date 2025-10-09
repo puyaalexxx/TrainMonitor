@@ -3,7 +3,8 @@ jQuery(function ($) {
     $('#train-table').on('click', '.save-incident', function () {
         const $thisButton = $(this);
         const $currentModal = $thisButton.closest('.add-incident-modal');
-        const $form = $('#add-incident-form-' + $currentModal.data('train-id'));
+        const trainID = $currentModal.data('train-id');
+        const $form = $('#add-incident-form-' + trainID);
 
         // Trigger unobtrusive validation
         if (!$form.valid()) {
@@ -29,6 +30,7 @@ jQuery(function ($) {
                     const $success = $form.prev('.incident-success');
                     $success.text(response.message).removeClass('d-none');
 
+
                     setTimeout(() => {
                         //hide success message
                         $success.addClass('d-none');
@@ -37,6 +39,10 @@ jQuery(function ($) {
                         $form[0].reset();
 
                         $currentModal.modal('hide');
+
+                        //show incidents history button if hidden
+                        $("#btn-no-incidents-" + trainID).addClass("d-none");
+                        $("#btn-view-history-" + trainID).removeClass("d-none");
                     }, 2000);
 
                 } else if (response.errors) {
