@@ -1,4 +1,6 @@
-﻿namespace TrainMonitor.DTOs;
+﻿// Ignore Spelling: Dto
+
+namespace TrainMonitor.DTOs;
 
 public sealed record AddIncidentDto
 {

@@ -35,22 +35,10 @@ public class TrainController : Controller
         // get trains that have incidents
         var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
 
-        //create a list of TrainViewModel trains from JSON data and incident IDs.
+        //map TrainJson objects to a list of TrainViewModel
         var trains = trainData
             .Where(t => t.ReturnValue != null)
-            .Select(t => new TrainViewModel
-            {
-                TrainId = t.ReturnValue.TrainId,
-                TrainName = t.TrainName,
-                TrainNumber = t.ReturnValue.TrainNumber,
-                DelayTime = t.ReturnValue.DelayTime,
-                LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
-                NextStation = t.ReturnValue.NextStop?.Title ?? string.Empty,
-                // check delay time to be bigger than 10 minutes
-                HasDelay = t.ReturnValue.DelayTime > 10,
-                // check if the train has incident saved in the database
-                HasIncident = incidentTrainIdsSet.Contains(t.ReturnValue.TrainId)
-            })
+            .Select(t => t.ToViewModel(incidentTrainIdsSet))
             .ToList();
 
         ViewBag.Title = "Trains";
@@ -69,15 +57,8 @@ public class TrainController : Controller
     {
         var incidents = await _trainService.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
 
-        var model = incidents
-            .Select(incident => new IncidentViewModel
-            {
-                Username = incident.Username,
-                Reason = incident.Reason,
-                Comment = incident.AdditionalComment
-            })
-            .ToList();
-
+        //map a collection of Incident objects to a list of IncidentViewModel
+        var model = incidents.Select(i => i.ToViewModel()).ToList();
 
         ViewBag.Title = "Train Incidents";
 
@@ -102,7 +83,7 @@ public class TrainController : Controller
             return Json(new { success = false, errors });
         }
 
-        // Check if train exists in DB, if not create it
+        //check if train exists in DB, if not create it
         var train = await _trainService.GetOrCreateTrainAsync(model.TrainId, cancellationToken);
 
         if (train == null)
@@ -111,7 +92,7 @@ public class TrainController : Controller
         //add incident to current train
         await _trainService.AddIncidentAsync(model.ToDto(), cancellationToken);
 
-        // Commit all changes in one transaction
+        //commit all changes in one transaction
         await _trainService.SaveChangesAsync(cancellationToken);
 
         return Ok(new { success = true, message = "Incident saved successfully!" });
