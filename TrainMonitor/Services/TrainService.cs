@@ -2,6 +2,7 @@
 
 using TrainMonitor.Data.Repositories;
 using TrainMonitor.DTOs;
+using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers;
 using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
@@ -48,21 +49,38 @@ public sealed class TrainService : ITrainService
     }
 
 
-    public async Task<Train?> GetOrCreateTrainAsync(string trainId, CancellationToken cancellationToken = default)
+    public async Task<Train?> GetOrCreateTrainAsync(string trainID, CancellationToken cancellationToken = default)
     {
         //check if train exists in DB
-        var train = await _trainRepository.GetByIdAsync(trainId, cancellationToken);
+        var train = await _trainRepository.GetByIdAsync(trainID, cancellationToken);
 
         if (train != null) return train;
 
         //if not, get train data from JSON and add to DB
-        var trainData = await TrainUtils.GetTrainDataFromJsonAsync(trainId, _env, cancellationToken);
+        var trainData = await TrainUtils.GetTrainDataFromJsonAsync(trainID, _env, cancellationToken);
 
         if (trainData == null) return null;
 
         await _trainRepository.AddAsync(trainData, cancellationToken);
 
         return trainData;
+    }
+
+    public async Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(trainID))
+        {
+            throw new InvalidIdException($"Invalid Train ID: {trainID}");
+        }
+
+        // check if train exists
+        var trainExists = await _trainRepository.TrainExistsAsync(trainID, cancellationToken);
+        if (!trainExists)
+        {
+            throw new TrainNotFoundException($"Train with ID {trainID} does not exist.");
+        }
+
+        return await _trainRepository.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
     }
 
     public async Task AddIncidentAsync(AddIncidentDto dto, CancellationToken cancellationToken = default)

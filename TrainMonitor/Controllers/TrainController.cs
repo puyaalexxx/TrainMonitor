@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Mvc;
 using TrainMonitor.DTOs;
-using TrainMonitor.Exceptions;
 using TrainMonitor.Helpers;
 using TrainMonitor.Services;
 using TrainMonitor.ViewModels;
@@ -28,8 +27,6 @@ public class TrainController : Controller
     /// <returns>A view displaying the list of trains.</returns>
     public async Task<IActionResult> GetTrains(CancellationToken cancellationToken)
     {
-        ViewBag.Title = "Trains";
-
         var trainData = await TrainUtils.LoadTrainsDataFromJsonFileAsync(_env, cancellationToken);
 
         //get train ids
@@ -39,6 +36,8 @@ public class TrainController : Controller
         var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
 
         var trains = _trainService.GetTrains(trainData, incidentTrainIdsSet);
+
+        ViewBag.Title = "Trains";
 
         return View("Trains", trains);
     }
@@ -50,16 +49,23 @@ public class TrainController : Controller
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A view displaying the incidents for the specified train.</returns>
     [HttpGet("{trainID}/incidents")]
-    public IActionResult GetTrainIncidents(string trainID, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTrainIncidents([FromRoute] string trainID, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-        {
-            throw new InvalidIdException($"Invalid Train ID: {trainID}");
-        }
+        var incidents = await _trainService.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
+
+        var model = incidents
+            .Select(incident => new IncidentViewModel
+            {
+                Username = incident.Username,
+                Reason = incident.Reason,
+                Comment = incident.AdditionalComment
+            })
+            .ToList();
+
 
         ViewBag.Title = "Train Incidents";
 
-        return View("Incidents");
+        return View("Incidents", model);
     }
 
     /// <summary>

@@ -96,19 +96,19 @@ body {
     color: #fff;
 }
 
-#train-table .bg-grey-light {
+.display-table .bg-grey-light {
     background-color: rgba(0, 0, 0, .05);
 }
 
-#train-table .btn {
+.display-table .btn {
     box-shadow: none !important;
 }
 
-#train-table .bg-danger {
+.display-table .bg-danger {
     background-color: #8b3840 !important;
 }
 
-#train-table .row {
+.display-table .row {
     margin-right: 0;
     margin-left: 0;
     align-items: center;
@@ -122,6 +122,6 @@ body {
     border: 1px solid #dc3545;
 }
 
-#train-table .btn.btn-no-incidents {
+.display-table .btn.btn-no-incidents {
     pointer-events: none;
 }

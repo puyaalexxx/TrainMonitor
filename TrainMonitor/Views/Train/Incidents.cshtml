@@ -1,6 +1,38 @@
-﻿@{
+﻿@model List<IncidentViewModel>
+
+@{
     Layout = "_Layout";
 }
 
-<h1 class="mb-4">@ViewBag.Title</h1>
+@if (Model != null && Model.Any())
+{
+    <h1 class="mb-4">@ViewBag.Title</h1>
+
+    <div class="display-table border-bottom">
+        <!-- Header -->
+        <div class="top-header row bg-dark font-weight-bold py-2 text-white">
+            <div class="col-2">#</div>
+            <div class="col-3">Username</div>
+            <div class="col-3">Reason</div>
+            <div class="col-4">Additional Comment</div>
+        </div>
+
+        <!-- Rows -->
+        @foreach (var (incident, index) in Model.Select((value, i) => (value, i)))
+        {
+            <div class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
+                <div class="col-2">@(index + 1)</div>
+                <div class="col-3">@incident.Username</div>
+                <div class="col-3">@incident.Reason</div>
+                <div class="col-4">@incident.Comment</div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="text-center py-4">
+        <h3>No incidents recorded for this train.</h3>
+    </div>
+}
 

@@ -28,15 +28,26 @@ public interface ITrainService
 
     /// <summary>
     /// Checks if a train with the specified <paramref name="trainId"/> exists in the database.
-    /// If it does not exist, verifies if the trainId exists in the JSON file.
+    /// If it does not exist, verifies if the trainID exists in the JSON file.
     /// If found in the JSON file, saves the train data to the database.
     /// </summary>
-    /// <param name="trainId">The ID of the train to retrieve or create.</param>
+    /// <param name="trainID">The ID of the train to retrieve or create.</param>
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>
-    /// The existing or newly created <see cref="Train"/> object, or <c>null</c> if the trainId does not exist in the JSON file.
+    /// The existing or newly created <see cref="Train"/> object, or <c>null</c> if the trainID does not exist in the JSON file.
     /// </returns>
-    Task<Train?> GetOrCreateTrainAsync(string trainId, CancellationToken cancellationToken = default);
+    Task<Train?> GetOrCreateTrainAsync(string trainID, CancellationToken cancellationToken = default);
+
+
+    /// <summary>
+    /// Retrieves all incidents associated with the specified train ID.
+    /// </summary>
+    /// <param name="trainID">The unique identifier of the train for which incidents are requested.</param>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
+    /// <returns>A <see cref="List{Incident}"/> containing all incidents for the specified train. Returns an empty list if there are no incidents.</returns>
+    /// <exception cref="InvalidIdException">Thrown when <paramref name="trainID"/> is null, empty, or whitespace.</exception>
+
+    Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds an incident to a specific train.

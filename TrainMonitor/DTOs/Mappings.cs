@@ -1,4 +1,6 @@
-﻿using TrainMonitor.ViewModels;
+﻿// Ignore Spelling: Dto
+
+using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.DTOs;
 
