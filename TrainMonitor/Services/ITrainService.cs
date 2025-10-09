@@ -1,20 +1,10 @@
 ﻿using TrainMonitor.DTOs;
-using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
-using TrainMonitor.ViewModels;
 
 namespace TrainMonitor.Services;
 
 public interface ITrainService
 {
-    /// <summary>
-    /// Builds a list of TrainViewModel trains from JSON data and incident IDs.
-    /// </summary>
-    /// <param name="trainData">A List of train data objects</param>
-    /// <param name="incidentTrainIdsSet">A set of TrainIds that have incidents saved into DB.</param>
-    /// <returns>List of TrainViewModel trains.</returns>
-    List<TrainViewModel> GetTrains(List<TrainJson> trainData, HashSet<string> incidentTrainIdsSet);
-
     /// <summary>
     /// Retrieves the IDs of trains that have at least one saved incident from the provided list of train IDs.
     /// </summary>

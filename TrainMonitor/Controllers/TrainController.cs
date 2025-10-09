@@ -35,7 +35,23 @@ public class TrainController : Controller
         // get trains that have incidents
         var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
 
-        var trains = _trainService.GetTrains(trainData, incidentTrainIdsSet);
+        //create a list of TrainViewModel trains from JSON data and incident IDs.
+        var trains = trainData
+            .Where(t => t.ReturnValue != null)
+            .Select(t => new TrainViewModel
+            {
+                TrainId = t.ReturnValue.TrainId,
+                TrainName = t.TrainName,
+                TrainNumber = t.ReturnValue.TrainNumber,
+                DelayTime = t.ReturnValue.DelayTime,
+                LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(t),
+                NextStation = t.ReturnValue.NextStop?.Title ?? string.Empty,
+                // check delay time to be bigger than 10 minutes
+                HasDelay = t.ReturnValue.DelayTime > 10,
+                // check if the train has incident saved in the database
+                HasIncident = incidentTrainIdsSet.Contains(t.ReturnValue.TrainId)
+            })
+            .ToList();
 
         ViewBag.Title = "Trains";
 
