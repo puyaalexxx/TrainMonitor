@@ -17,6 +17,7 @@ public class TrainRepository : ITrainRepository
 
     public Task<List<string>> GetTrainIdsWithIncidentsAsync(IEnumerable<string> trainIds, CancellationToken cancellationToken = default) =>
         _context.Incidents
+            .AsNoTracking()
             .Where(i => trainIds.Contains(i.TrainId))
             .Select(i => i.TrainId)
             .Distinct()
@@ -26,7 +27,7 @@ public class TrainRepository : ITrainRepository
         _context.Trains.AddAsync(train, cancellationToken).AsTask();
 
     public Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default) =>
-        _context.Incidents.Where(i => i.TrainId == trainID).ToListAsync(cancellationToken);
+        _context.Incidents.AsNoTracking().Where(i => i.TrainId == trainID).ToListAsync(cancellationToken);
 
     public Task AddIncidentAsync(Incident incident, CancellationToken cancellationToken = default) =>
         _context.Incidents.AddAsync(incident, cancellationToken).AsTask();
