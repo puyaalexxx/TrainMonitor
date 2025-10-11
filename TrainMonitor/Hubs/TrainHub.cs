@@ -11,6 +11,8 @@ public class TrainHub : Hub
 {
     private readonly ITrainService _trainService;
     private readonly IWebHostEnvironment _env;
+    private static readonly HashSet<string> ConnectedClients = new();
+
 
     public TrainHub(ITrainService trainService, IWebHostEnvironment env)
     {
@@ -18,8 +20,23 @@ public class TrainHub : Hub
         _env = env;
     }
 
+    public override Task OnConnectedAsync()
+    {
+        ConnectedClients.Add(Context.ConnectionId);
+        return base.OnConnectedAsync();
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        ConnectedClients.Remove(Context.ConnectionId);
+        return base.OnDisconnectedAsync(exception);
+    }
+
     public async Task StartStreaming()
     {
+        // Only stream if the client is new
+        if (!ConnectedClients.Contains(Context.ConnectionId)) return;
+
         var trainData = await TrainUtils.LoadTrainsDataFromJsonFileAsync(_env, Context.ConnectionAborted);
 
         var trainIds = TrainUtils.GetAllTrainIdsFromJson(trainData);
@@ -31,7 +48,7 @@ public class TrainHub : Hub
         {
             var viewModel = train.ToViewModel(incidentTrainIdsSet);
 
-            await Clients.All.SendAsync("ReceiveTrain", viewModel, DateTime.Now.ToString("HH:mm:ss"), Context.ConnectionAborted);
+            await Clients.Caller.SendAsync("ReceiveTrain", viewModel, DateTime.Now.ToString("HH:mm:ss"), Context.ConnectionAborted);
 
             await Task.Delay(2000, Context.ConnectionAborted); // simulate train updates over time
         }
