@@ -1,6 +1,4 @@
-﻿// Ignore Spelling: env
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TrainMonitor.DTOs;
 using TrainMonitor.Helpers;
 using TrainMonitor.Services;
@@ -11,12 +9,10 @@ namespace TrainMonitor.Controllers;
 [Route("trains")]
 public class TrainController : Controller
 {
-    private readonly IWebHostEnvironment _env;
     private readonly ITrainService _trainService;
 
-    public TrainController(ITrainService trainService, IWebHostEnvironment env)
+    public TrainController(ITrainService trainService)
     {
-        _env = env;
         _trainService = trainService;
     }
 

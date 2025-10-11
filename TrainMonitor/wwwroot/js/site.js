@@ -20,40 +20,13 @@
                 console.log("Train received:", train);
                 console.log("Timestamp:", timestamp);
 
+                //remove loader
+                $("#loading-message").remove();
 
+                const $rowHTML = this.trainRowContent(train);
 
-
-                // Use jQuery to manipulate DOM
-                let html = '';
-
-                if (train.hasDelay) {
-                    html += `<div class="row py-2 text-decoration-none text-white bg-danger border-top">
-                                <div class="col">${train.trainName}</div>
-
-                                <div class="col-1">
-                                    <button type="button" class="btn btn-sm btn-dark add-incident" data-bs-toggle="modal" data-bs-target="#add-incident-${train.trainId}">Add</button>
-                                 </div>
-
-                                <div class="col-2">
-                                <button class="btn btn-sm btn-info incident-history" data-train-id="${train.trainId}">History</button>
-                             </div>`;
-
-                    // Optional: modal HTML (or you can render it separately)
-                    html += `<!-- Modal HTML for adding incident -->`;
-
-                    html += `</div>`;
-                } else {
-                    html += `<div class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">`;
-
-                    html += `<div class="col">${train.trainName}</div>`; // simplified
-
-                    html += `<div class="col-1"></div><div class="col-2"></div>`;
-
-                    html += `</div>`;
-                }
-
-                // Append to the container
-                $('#train-rows-target').prepend(html);
+                // Append to the train container
+                $rowHTML.hide().prependTo('#train-rows-content').fadeIn(400);
             });
 
             connection.start().then(() => {
@@ -67,15 +40,48 @@
             });
         },
 
+        trainRowContent: function (train) {
+            // Clone row template
+            const $rowHTML = $("#train-row").clone().removeAttr("id").removeClass("d-none");
 
+            //add main columns
+            $rowHTML.children(".train-number").text(train.trainNumber);
+            $rowHTML.children(".train-name").text(train.trainName);
+            $rowHTML.children(".train-nexstation").text(train.nextStation);
+            $rowHTML.children(".train-delaytime").text(train.delayTime);
+            $rowHTML.children(".train-last-updated-time").text(train.lastUpdatedTime);
 
-        //Add Train incident via ajax 
+            //add Incident button if the delay is present
+            if (train.hasDelay) {
+                $rowHTML.addClass("text-white bg-danger");
+
+                $rowHTML.children(".train-add-incident").html(`
+                        <button type="button" class="btn btn-sm btn-dark" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#add-incident-${train.trainId}">
+                            Add
+                        </button>
+                    `);
+
+                //show Incident History button if the train has incidents
+                const $incidentHistoryArea = $rowHTML.children(".train-incident-history");
+                if (train.hasIncident) {
+                    $incidentHistoryArea.children('.btn-view-history').attr('href', 'trains/' + train.trainId + '/incidents').removeClass('d-none');
+                }
+                else {
+                    $incidentHistoryArea.children('.btn-no-incidents').removeClass('d-none');
+                }
+            }
+
+            return $rowHTML;
+        },
+
+        //Add Train incident via Ajax 
         addTrainIncident: function () {
             $('#train-table').on('click', '.save-incident', function () {
                 const $thisButton = $(this);
                 const $currentModal = $thisButton.closest('.add-incident-modal');
-                const trainID = $currentModal.data('train-id');
-                const $form = $('#add-incident-form-' + trainID);
+                const $form = $('#add-incident-form-' + $currentModal.data('train-id'));
 
                 // Trigger unobtrusive validation
                 if (!$form.valid()) {
@@ -86,49 +92,53 @@
                 // disable button to avoid double submissions
                 $thisButton.prop('disabled', true);
 
-                $.ajax({
-                    url: '/trains/addIncident',
-                    type: 'POST',
-                    data: $form.serialize(),
-                    beforeSend: function () {
-                        $form.children('.server-errors').empty();
-                        $thisButton.find('.spinner-border').removeClass('d-none');
-                    },
-                    success: function (response) {
+                this.addTrainIncidentAjax($form, $thisButton, $currentModal);
+            });
+        },
 
-                        if (response.success) {
+        //Ajax method
+        addTrainIncidentAjax: function ($form, $thisButton, $currentModal) {
+            $.ajax({
+                url: '/trains/addIncident',
+                type: 'POST',
+                data: $form.serialize(),
+                beforeSend: function () {
+                    $form.children('.server-errors').empty();
+                    $thisButton.find('.spinner-border').removeClass('d-none');
+                },
+                success: function (response) {
 
-                            const $success = $form.prev('.incident-success');
-                            $success.text(response.message).removeClass('d-none');
+                    if (response.success) {
 
+                        const $success = $form.prev('.incident-success');
+                        $success.text(response.message).removeClass('d-none');
 
-                            setTimeout(() => {
-                                //hide success message
-                                $success.addClass('d-none');
+                        setTimeout(() => {
+                            //hide success message
+                            $success.addClass('d-none');
 
-                                // Reset all fields in the form
-                                $form[0].reset();
+                            // Reset all fields in the form
+                            $form[0].reset();
 
-                                $currentModal.modal('hide');
+                            $currentModal.modal('hide');
 
-                                //show incidents history button if hidden
-                                $("#btn-no-incidents-" + trainID).addClass("d-none");
-                                $("#btn-view-history-" + trainID).removeClass("d-none");
-                            }, 2000);
+                            //show incidents history button if hidden
+                            $("#btn-no-incidents").addClass("d-none");
+                            $("#btn-view-history").removeClass("d-none");
+                        }, 2000);
 
-                        } else if (response.errors) {
-                            $form.children('.server-errors').append(response.errors);
-                        }
-                    },
-                    error: function (xhr) {
-                        // Handle errors
-                        console.log('Error saving incident: ' + xhr.responseText);
-                    },
-                    complete: function () {
-                        $thisButton.find('.spinner-border').addClass('d-none');
-                        $thisButton.prop('disabled', false);
+                    } else if (response.errors) {
+                        $form.children('.server-errors').append(response.errors);
                     }
-                });
+                },
+                error: function (xhr) {
+                    // Handle errors
+                    console.log('Error saving incident: ' + xhr.responseText);
+                },
+                complete: function () {
+                    $thisButton.find('.spinner-border').addClass('d-none');
+                    $thisButton.prop('disabled', false);
+                }
             });
         },
 

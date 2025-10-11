@@ -14,18 +14,20 @@ internal static class ViewModelMappings
     /// <returns>The mapped <see cref="TrainViewModel"/>.</returns>
     public static TrainViewModel ToViewModel(this TrainJson train, HashSet<string> incidentTrainIdsSet)
     {
+        var delayTime = train.ReturnValue.DelayTime;
+
         return new TrainViewModel
         {
             TrainId = train.ReturnValue.TrainId,
             TrainName = train.TrainName,
             TrainNumber = train.ReturnValue.TrainNumber,
-            DelayTime = train.ReturnValue.DelayTime,
+            DelayTime = delayTime == 1 ? "1 min" : $"{delayTime} mins",
             LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(train),
             NextStation = train.ReturnValue.NextStop?.Title ?? string.Empty,
             // check delay time to be bigger than 10 minutes
             HasDelay = train.ReturnValue.DelayTime > 10,
             // check if the train has incident saved in the database
-            HasIncident = incidentTrainIdsSet.Contains(train.ReturnValue.TrainId)
+            HasIncident = incidentTrainIdsSet.Contains(train.ReturnValue.TrainId),
         };
     }
 

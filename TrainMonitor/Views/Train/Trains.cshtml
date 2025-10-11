@@ -20,42 +20,41 @@
     </div>
 
     <!-- Rows -->
-    <div id="train-rows-target">
+    <div id="train-rows-content">
+
+        <!-- Loading indicator -->
         <div id="loading-message" class="row py-3 text-center text-muted justify-content-center align-items-center">
             <div class="spinner-border me-2">
                 <span class="visually-hidden">Loading...</span>
             </div>
             Fetching live train data...
         </div>
+
+        <!-- Row -->
+        <div id="train-row" class="row py-2 text-decoration-none border-top d-none">
+            <div class="col-2 train-number"></div>
+            <div class="col-2 train-name"></div>
+            <div class="col-2 train-nexstation"></div>
+            <div class="col-1 train-delaytime"></div>
+            <div class="col-2 train-last-updated-time"></div>
+            <div class="col-1 train-add-incident"></div>
+            <div class="col-2 train-incident-history">
+                <a href=""
+                   target="_blank"
+                   class="btn btn-sm btn-danger btn-view-history d-none"
+                   title="View Incident History">
+                    <i class="fas fa-bell"></i>
+                    View History
+                </a>
+                <span class="btn btn-sm btn-dark btn-no-incidents d-none"
+                      title="No Incident History">
+                    <i class="fas fa-bell-slash"></i>
+                    No History
+                </span>
+
+            </div>
+
+            @* <partial name="Partials/_IncidentModal" model="new AddIncidentViewModel { TrainId = train.TrainId }" /> *@
+        </div>
     </div>
-
-    <!-- Rows -->
-    @foreach (var train in Model)
-    {
-        @if (@train.HasDelay)
-        {
-            <div class="row py-2 text-decoration-none text-white bg-danger border-top">
-                <partial name="Partials/_TrainRow" model="train" />
-
-                <div class="col-1">
-                    <button type="button" class="btn btn-sm btn-dark add-incident" data-bs-toggle="modal" data-bs-target="#add-incident-@train.TrainId">Add</button>
-                </div>
-
-                <div class="col-2">
-                    <partial name="Partials/_IncidentHistoryButtons" model="train" />
-                </div>
-
-                <partial name="Partials/_IncidentModal" model="new AddIncidentViewModel { TrainId = train.TrainId }" />
-            </div>
-        }
-        else
-        {
-            <div class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
-                <partial name="Partials/_TrainRow" model="train" />
-                <div class="col-1"></div>
-                <div class="col-2"></div>
-            </div>
-
-        }
-    }
 </div>

@@ -118,6 +118,10 @@ body {
     border-top: 0px !important;
 }
 
+.bg-danger.border-top {
+    border-top: #8b3840 !important;
+}
+
 .form-control.input-validation-error {
     border: 1px solid #dc3545;
 }
