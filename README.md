@@ -25,3 +25,4 @@
 - JSON Deserialization with System.Text.Json
 - ViewModel for passing data to views
 - DTOs for data transfer between layers
+- Sign

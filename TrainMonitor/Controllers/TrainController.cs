@@ -21,29 +21,15 @@ public class TrainController : Controller
     }
 
     /// <summary>
-    /// Handles GET requests to "/trains" and returns a list of trains with their details.
+    /// Handles GET requests to "/trains".
     /// </summary>
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A view displaying the list of trains.</returns>
-    public async Task<IActionResult> GetTrains(CancellationToken cancellationToken)
+    public IActionResult GetTrains(CancellationToken cancellationToken)
     {
-        var trainData = await TrainUtils.LoadTrainsDataFromJsonFileAsync(_env, cancellationToken);
-
-        //get train ids
-        var trainIds = TrainUtils.GetAllTrainIdsFromJson(trainData);
-
-        // get trains that have incidents
-        var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, cancellationToken)).ToHashSet();
-
-        //map TrainJson objects to a list of TrainViewModel
-        var trains = trainData
-            .Where(t => t.ReturnValue != null)
-            .Select(t => t.ToViewModel(incidentTrainIdsSet))
-            .ToList();
-
         ViewBag.Title = "Trains";
 
-        return View("Trains", trains);
+        return View("Trains", new List<TrainViewModel>());
     }
 
     /// <summary>

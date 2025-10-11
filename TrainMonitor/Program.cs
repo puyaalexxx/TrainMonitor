@@ -3,6 +3,7 @@ using TrainMonitor.Data.Repositories;
 using TrainMonitor.DataBase;
 using TrainMonitor.Extensions;
 using TrainMonitor.Helpers;
+using TrainMonitor.Hubs;
 using TrainMonitor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddControllersWithViews();
 //DI
 builder.Services.AddScoped<ITrainRepository, TrainRepository>();
 builder.Services.AddScoped<ITrainService, TrainService>();
+builder.Services.AddScoped<ITrainStreamingService, TrainStreamingService>();
+
 
 // Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -25,6 +28,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         ServerVersion.AutoDetect(connectionString)
     );
 });
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -48,6 +53,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapDefaultControllerRoute();
+
+app.MapHub<TrainHub>("/trainHub");
 
 
 await app.RunAsync();

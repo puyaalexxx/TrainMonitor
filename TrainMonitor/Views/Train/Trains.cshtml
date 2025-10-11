@@ -20,6 +20,16 @@
     </div>
 
     <!-- Rows -->
+    <div id="train-rows-target">
+        <div id="loading-message" class="row py-3 text-center text-muted justify-content-center align-items-center">
+            <div class="spinner-border me-2">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            Fetching live train data...
+        </div>
+    </div>
+
+    <!-- Rows -->
     @foreach (var train in Model)
     {
         @if (@train.HasDelay)

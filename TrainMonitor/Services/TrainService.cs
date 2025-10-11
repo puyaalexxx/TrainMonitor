@@ -28,7 +28,6 @@ public sealed class TrainService : ITrainService
         return incidentTrainIds;
     }
 
-
     public async Task<Train?> GetOrCreateTrainAsync(string trainID, CancellationToken cancellationToken = default)
     {
         //check if train exists in DB

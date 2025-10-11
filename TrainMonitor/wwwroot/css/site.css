@@ -125,3 +125,8 @@ body {
 .display-table .btn.btn-no-incidents {
     pointer-events: none;
 }
+
+#loading-message {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
