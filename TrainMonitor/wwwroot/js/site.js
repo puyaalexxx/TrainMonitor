@@ -18,7 +18,7 @@
             // Receive a single train from the server
             connection.on("ReceiveTrain", (train, timestamp) => {
                 console.log("Train received:", train);
-                console.log("Timestamp:", timestamp);
+                // console.log("Timestamp:", timestamp);
 
                 //remove loader
                 $("#loading-message").remove();
@@ -40,9 +40,10 @@
             });
         },
 
+        // add train row HTML content area
         trainRowContent: function (train) {
             // Clone row template
-            const $rowHTML = $("#train-row").clone().removeAttr("id").removeClass("d-none");
+            const $rowHTML = $("#train-row").clone().attr("id", "train-row-" + train.trainId).removeClass("d-none");
 
             //add main columns
             $rowHTML.children(".train-number").text(train.trainNumber);
@@ -52,44 +53,25 @@
             $rowHTML.children(".train-last-updated-time").text(train.lastUpdatedTime);
 
             //add Incident button if the delay is present
-            if (train.hasDelay) {
-                $rowHTML.addClass("text-white bg-danger");
-
-                $rowHTML.children(".train-add-incident").html(`
-                        <button type="button" class="btn btn-sm btn-dark" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#add-incident-${train.trainId}">
-                            Add
-                        </button>
-                    `);
-
-                //show Incident History button if the train has incidents
-                const $incidentHistoryArea = $rowHTML.children(".train-incident-history");
-                if (train.hasIncident) {
-                    $incidentHistoryArea.children('.btn-view-history').attr('href', 'trains/' + train.trainId + '/incidents').removeClass('d-none');
-                }
-                else {
-                    $incidentHistoryArea.children('.btn-no-incidents').removeClass('d-none');
-                }
-            }
+            this.addDelayArea($rowHTML, train);
 
             return $rowHTML;
         },
 
         //Add Train incident via Ajax 
         addTrainIncident: function () {
-            $('#train-table').on('click', '.save-incident', function () {
-                const $thisButton = $(this);
+            $('#save-incident-form').on('click', (event) => {
+                const $thisButton = $(event.currentTarget);
                 const $currentModal = $thisButton.closest('.add-incident-modal');
-                const $form = $('#add-incident-form-' + $currentModal.data('train-id'));
+                const $form = $currentModal.find('.add-incident-form');
 
                 // Trigger unobtrusive validation
                 if (!$form.valid()) {
                     $.validator.unobtrusive.parse($form);
-                    return; // form is invalid, do not continue
+                    return;
                 }
 
-                // disable button to avoid double submissions
+                //disable save button to avoid repeated ajax calls
                 $thisButton.prop('disabled', true);
 
                 this.addTrainIncidentAjax($form, $thisButton, $currentModal);
@@ -106,12 +88,16 @@
                     $form.children('.server-errors').empty();
                     $thisButton.find('.spinner-border').removeClass('d-none');
                 },
-                success: function (response) {
+                success: (response) => {
 
                     if (response.success) {
 
-                        const $success = $form.prev('.incident-success');
+                        //set success area message
+                        const $success = $form.siblings('.incident-success');
                         $success.text(response.message).removeClass('d-none');
+
+                        //get train id
+                        const trainID = $form.children('.train-id-input').val();
 
                         setTimeout(() => {
                             //hide success message
@@ -123,9 +109,9 @@
                             $currentModal.modal('hide');
 
                             //show incidents history button if hidden
-                            $("#btn-no-incidents").addClass("d-none");
-                            $("#btn-view-history").removeClass("d-none");
-                        }, 2000);
+                            this.changeHistoryButton($('#train-row-' + trainID).find(".btn-no-incidents"), trainID, false, true);
+                            this.changeHistoryButton($('#train-row-' + trainID).find(".btn-view-history"), trainID);
+                        }, 1500);
 
                     } else if (response.errors) {
                         $form.children('.server-errors').append(response.errors);
@@ -142,10 +128,27 @@
             });
         },
 
+        //Add specific Train info to the modal when opened
+        populateModalWithTrainInfo: function () {
+            $('#train-table').on('click', '.train-add-incident button', function () {
+                const $modal = $('#add-incident-modal');
+                const trainId = $(this).data('train-id');
+                const trainNumber = $(this).data('train-number');
+
+                // add train id to the hidden input form
+                $modal.find('.train-id-input').val(trainId);
+
+                //add train number to the heading
+                $modal.find('.train-number-heading span').text(trainNumber);
+            });
+        },
+
         // Clear errors and fields when modal is closed
         clearModalFields: function () {
-            $('#train-table').on('hidden.bs.modal', '.add-incident-modal', function () {
-                const $form = $(this).find('form');
+            $('#add-incident-modal').on('hidden.bs.modal', function () {
+                const $form = $(this).find('.add-incident-form');
+
+                //clear form server errors
                 $form.children('.server-errors').empty();
 
                 // Clear server-side errors
@@ -154,7 +157,56 @@
                 // Clear unobtrusive validation errors from spans
                 $form.find('.field-validation-error').empty();
                 $form.find('.input-validation-error').removeClass('input-validation-error');
+
+                // Reset all fields in the form
+                $form[0].reset();
+                $form.find('.train-id-input').val('');
             });
+        },
+
+        //add delay area HTML
+        addDelayArea: function ($rowHTML, train) {
+            if (train.hasDelay) {
+                $rowHTML.addClass("text-white bg-danger");
+
+                //add button
+                $rowHTML.children(".train-add-incident").html(`
+                        <button type="button" class="btn btn-sm btn-dark" 
+                            data-train-id="${train.trainId}"
+                            data-train-number="${train.trainNumber}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#add-incident-modal">
+                            Add
+                        </button>
+                    `);
+
+                //add train info to opened modal
+                this.populateModalWithTrainInfo();
+
+                //show Incident History button if the train has incidents
+                const $incidentHistoryArea = $rowHTML.children(".train-incident-history");
+                if (train.hasIncident) {
+                    this.changeHistoryButton($incidentHistoryArea.children('.btn-view-history'), train.trainId);
+                }
+                else {
+                    this.changeHistoryButton($incidentHistoryArea.children('.btn-no-incidents'), train.trainId, false);
+                }
+            }
+        },
+
+        //add extra attributes to the history button
+        changeHistoryButton: function ($button, trainId, viewHistoryButton = true, hide = false) {
+            //add button link
+            if (viewHistoryButton) {
+                $button.attr('href', 'trains/' + trainId + '/incidents');
+            }
+
+            if (hide) {
+                $button.addClass("d-none");
+            }
+            else {
+                $button.removeClass("d-none");
+            }
         },
 
     };

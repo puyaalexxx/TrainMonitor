@@ -25,7 +25,7 @@ public class TrainController : Controller
     {
         ViewBag.Title = "Trains";
 
-        return View("Trains", new List<TrainViewModel>());
+        return View("Trains");
     }
 
     /// <summary>
