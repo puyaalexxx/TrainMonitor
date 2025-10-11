@@ -26,3 +26,4 @@
 - ViewModel for passing data to views
 - DTOs for data transfer between layers
 - SignalR for real-time web functionality
+- SignalR notifications for real-time updates

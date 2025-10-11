@@ -135,6 +135,10 @@ body {
     margin-bottom: 20px;
 }
 
-.train-number-heading {
+.add-incident-modal .train-number-heading {
     text-align: center;
+}
+
+.add-incident-modal .incident-success {
+    margin-bottom: 0;
 }

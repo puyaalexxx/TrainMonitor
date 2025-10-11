@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 //DI
 builder.Services.AddScoped<ITrainRepository, TrainRepository>();
 builder.Services.AddScoped<ITrainService, TrainService>();
+builder.Services.AddScoped<ITrainNotificationService, TrainNotificationService>();
 
 // Register DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

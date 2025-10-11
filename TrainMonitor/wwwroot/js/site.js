@@ -17,8 +17,7 @@
 
             // Receive a single train from the server
             connection.on("ReceiveTrain", (train, timestamp) => {
-                console.log("Train received:", train);
-                // console.log("Timestamp:", timestamp);
+                //console.log("Train received:", train);
 
                 //remove loader
                 $("#loading-message").remove();
@@ -29,6 +28,14 @@
                 $rowHTML.hide().prependTo('#train-rows-content').fadeIn(400);
             });
 
+            // Handle incident added event to change view history buttons across clients
+            connection.on("IncidentAdded", (trainID) => {
+                //show incidents history button if hidden
+                this.changeHistoryButton($('#train-row-' + trainID).find(".btn-no-incidents"), trainID, false, true);
+                this.changeHistoryButton($('#train-row-' + trainID).find(".btn-view-history"), trainID);
+            });
+
+            //call StartStreaming method from TrainHub
             connection.start().then(() => {
                 console.log("Connected to TrainHub");
                 connection.invoke("StartStreaming").catch(err => console.error(err.toString()));
@@ -80,13 +87,19 @@
 
         //Ajax method
         addTrainIncidentAjax: function ($form, $thisButton, $currentModal) {
+            const $modalFooterArea = $currentModal.find('.modal-footer');
+            const $modalHeading = $form.siblings('.train-number-heading');
+            const $btnSpinner = $thisButton.find('.spinner-border');
+            const $serverErrorsArea = $form.children('.server-errors');
+
+
             $.ajax({
                 url: '/trains/addIncident',
                 type: 'POST',
                 data: $form.serialize(),
                 beforeSend: function () {
-                    $form.children('.server-errors').empty();
-                    $thisButton.find('.spinner-border').removeClass('d-none');
+                    $serverErrorsArea.empty();
+                    $btnSpinner.removeClass('d-none');
                 },
                 success: (response) => {
 
@@ -95,6 +108,9 @@
                         //set success area message
                         const $success = $form.siblings('.incident-success');
                         $success.text(response.message).removeClass('d-none');
+
+                        //hide form area
+                        $form.add($modalFooterArea).add($modalHeading).hide();
 
                         //get train id
                         const trainID = $form.children('.train-id-input').val();
@@ -114,7 +130,7 @@
                         }, 1500);
 
                     } else if (response.errors) {
-                        $form.children('.server-errors').append(response.errors);
+                        $serverErrorsArea.append(response.errors);
                     }
                 },
                 error: function (xhr) {
@@ -122,10 +138,44 @@
                     console.log('Error saving incident: ' + xhr.responseText);
                 },
                 complete: function () {
-                    $thisButton.find('.spinner-border').addClass('d-none');
-                    $thisButton.prop('disabled', false);
+                    $btnSpinner.addClass('d-none');
+
+                    setTimeout(() => {
+                        $thisButton.prop('disabled', false);
+                        $form.add($modalFooterArea).add($modalHeading).show();
+                    }, 2000);
                 }
             });
+        },
+
+        //add delay area HTML
+        addDelayArea: function ($rowHTML, train) {
+            if (train.hasDelay) {
+                $rowHTML.addClass("text-white bg-danger");
+
+                //add button
+                $rowHTML.children(".train-add-incident").html(`
+                        <button type="button" class="btn btn-sm btn-dark" 
+                            data-train-id="${train.trainId}"
+                            data-train-number="${train.trainNumber}"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#add-incident-modal">
+                            Add
+                        </button>
+                    `);
+
+                //add train info to opened modal
+                this.populateModalWithTrainInfo();
+
+                //show Incident History button if the train has incidents
+                const $incidentHistoryArea = $rowHTML.children(".train-incident-history");
+                if (train.hasIncident) {
+                    this.changeHistoryButton($incidentHistoryArea.children('.btn-view-history'), train.trainId);
+                }
+                else {
+                    this.changeHistoryButton($incidentHistoryArea.children('.btn-no-incidents'), train.trainId, false);
+                }
+            }
         },
 
         //Add specific Train info to the modal when opened
@@ -162,36 +212,6 @@
                 $form[0].reset();
                 $form.find('.train-id-input').val('');
             });
-        },
-
-        //add delay area HTML
-        addDelayArea: function ($rowHTML, train) {
-            if (train.hasDelay) {
-                $rowHTML.addClass("text-white bg-danger");
-
-                //add button
-                $rowHTML.children(".train-add-incident").html(`
-                        <button type="button" class="btn btn-sm btn-dark" 
-                            data-train-id="${train.trainId}"
-                            data-train-number="${train.trainNumber}"
-                            data-bs-toggle="modal" 
-                            data-bs-target="#add-incident-modal">
-                            Add
-                        </button>
-                    `);
-
-                //add train info to opened modal
-                this.populateModalWithTrainInfo();
-
-                //show Incident History button if the train has incidents
-                const $incidentHistoryArea = $rowHTML.children(".train-incident-history");
-                if (train.hasIncident) {
-                    this.changeHistoryButton($incidentHistoryArea.children('.btn-view-history'), train.trainId);
-                }
-                else {
-                    this.changeHistoryButton($incidentHistoryArea.children('.btn-no-incidents'), train.trainId, false);
-                }
-            }
         },
 
         //add extra attributes to the history button

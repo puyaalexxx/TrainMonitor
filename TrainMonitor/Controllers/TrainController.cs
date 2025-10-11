@@ -10,10 +10,12 @@ namespace TrainMonitor.Controllers;
 public class TrainController : Controller
 {
     private readonly ITrainService _trainService;
+    private readonly ITrainNotificationService _notificationService;
 
-    public TrainController(ITrainService trainService)
+    public TrainController(ITrainService trainService, ITrainNotificationService notificationService)
     {
         _trainService = trainService;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -76,6 +78,9 @@ public class TrainController : Controller
 
         //commit all changes in one transaction
         await _trainService.SaveChangesAsync(cancellationToken);
+
+        //notify all connected SignalR clients about the new incident
+        await _notificationService.BroadcastIncidentAsync(model.TrainId);
 
         return Ok(new { success = true, message = "Incident saved successfully!" });
     }

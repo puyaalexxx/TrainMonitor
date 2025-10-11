@@ -53,4 +53,14 @@ public class TrainHub : Hub
             await Task.Delay(2000, Context.ConnectionAborted); // simulate train updates over time
         }
     }
+
+    /// <summary>
+    /// Broadcasts a train incident notification to all connected SignalR clients.
+    /// </summary>
+    /// <param name="trainId">The ID of the train for which the incident was added.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+    public async Task BroadcastIncident(string trainId)
+    {
+        await Clients.All.SendAsync("IncidentAdded", trainId);
+    }
 }
