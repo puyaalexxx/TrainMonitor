@@ -10,21 +10,6 @@ namespace TrainMonitor.Helpers;
 public static class TrainUtils
 {
     /// <summary>
-    /// Converts the <c>LastUpdatedTime</c> of a <see cref="TrainJson"/> object to a formatted string.
-    /// If <c>LastUpdatedTime"</c> is <c>null</c>, returns an empty string.
-    /// </summary>
-    /// <param name="train">The <see cref="TrainJson"/> object containing the LastUpdatedTime.</param>
-    /// <returns>Formatted LastUpdatedTime or an empty string.</returns>
-    public static string LastUpdatedTimeConversion(TrainJson train)
-    {
-        return train.ReturnValue.LastUpdatedTime.HasValue
-                ? train.ReturnValue.LastUpdatedTime.Value
-                    .ToUniversalTime()
-                    .ToString("dd MMM yyyy, HH:mm:ss")
-                : string.Empty;
-    }
-
-    /// <summary>
     /// Collects all error messages from the <see cref="ModelStateDictionary"/> and concatenates them into a single string.
     /// If there are no errors, returns a default error message.
     /// </summary>

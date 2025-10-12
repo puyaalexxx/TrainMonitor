@@ -13,9 +13,6 @@ public class TrainReturnValue
     [JsonPropertyName("arrivingTime")]
     public int DelayTime { get; set; }
 
-    [JsonPropertyName("updaterTimeStamp")]
-    public DateTime? LastUpdatedTime { get; set; }
-
     [JsonPropertyName("nextStopObj")]
     public NextStop NextStop { get; set; } = default!;
 }

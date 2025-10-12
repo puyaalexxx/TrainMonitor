@@ -16,7 +16,7 @@
                 .build();
 
             // Receive a single train from the server
-            connection.on("ReceiveTrain", (train, timestamp) => {
+            connection.on("ReceiveTrain", (train, trainLifetime) => {
                 //console.log("Train received:", train);
 
                 //remove loader
@@ -26,6 +26,16 @@
 
                 // Append to the train container
                 $rowHTML.hide().prependTo('#train-rows-content').fadeIn(400);
+
+
+                this.showProgressBarBackground($rowHTML, trainLifetime);
+            });
+
+            // Remove a train row when instructed by the server
+            connection.on("RemoveTrain", function (trainID) {
+                $("#train-row-" + trainID).fadeOut(400, function () {
+                    $(this).remove();
+                });
             });
 
             // Handle incident added event to change view history buttons across clients
@@ -227,6 +237,23 @@
             else {
                 $button.removeClass("d-none");
             }
+        },
+
+        //train progress bar
+        showProgressBarBackground: function ($rowHTML, trainLifetime) {
+            const $progressBar = $rowHTML.children(".progress-fill");
+
+            let startTime = Date.now();
+
+            const interval = setInterval(() => {
+                const elapsedMs = Date.now() - startTime; // milliseconds
+                const percent = Math.min((elapsedMs / trainLifetime) * 100, 100);
+
+                // update the CSS width with the percentage
+                $progressBar.css("width", percent + "%");
+
+                if (percent >= 100) clearInterval(interval);
+            }, 50);
         },
 
     };

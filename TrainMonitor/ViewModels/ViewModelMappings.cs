@@ -1,5 +1,4 @@
-﻿using TrainMonitor.Helpers;
-using TrainMonitor.Helpers.Json;
+﻿using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
 
 namespace TrainMonitor.ViewModels;
@@ -22,7 +21,7 @@ internal static class ViewModelMappings
             TrainName = train.TrainName,
             TrainNumber = train.ReturnValue.TrainNumber,
             DelayTime = delayTime == 1 ? "1 min" : $"{delayTime} mins",
-            LastUpdatedTime = TrainUtils.LastUpdatedTimeConversion(train),
+            LastUpdatedTime = DateTime.Now.ToString("HH:mm:ss"),
             NextStation = train.ReturnValue.NextStop?.Title ?? string.Empty,
             // check delay time to be bigger than 10 minutes
             HasDelay = train.ReturnValue.DelayTime > 10,

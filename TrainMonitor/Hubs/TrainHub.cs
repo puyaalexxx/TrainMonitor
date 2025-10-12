@@ -44,23 +44,51 @@ public class TrainHub : Hub
         // This service call fetches incident history from MariaDB
         var incidentTrainIdsSet = (await _trainService.GetTrainIdsWithIncidentsAsync(trainIds, Context.ConnectionAborted)).ToHashSet();
 
-        foreach (var train in trainData)
+        var random = new Random();
+        var remainingTrains = trainData.ToList();
+
+        bool isFirstIteration = true;
+
+        while (!Context.ConnectionAborted.IsCancellationRequested)
         {
-            var viewModel = train.ToViewModel(incidentTrainIdsSet);
+            int delayMs = isFirstIteration ? 1000 : random.Next(3000, 5000);
+            await Task.Delay(delayMs, Context.ConnectionAborted);
 
-            await Clients.Caller.SendAsync("ReceiveTrain", viewModel, DateTime.Now.ToString("HH:mm:ss"), Context.ConnectionAborted);
+            // random number of trains to send (1–3)
+            int trainsToSend = random.Next(1, Math.Min(4, remainingTrains.Count + 1));
 
-            await Task.Delay(2000, Context.ConnectionAborted); // simulate train updates over time
+            // choose random trains without repetition
+            var batch = remainingTrains
+                .OrderBy(_ => random.Next())
+                .Take(trainsToSend)
+                .ToList();
+
+            foreach (var train in batch)
+            {
+                //how many seconds the train should be displayed
+                var trainLifetime = random.Next(40000, 60000);
+
+                var viewModel = train.ToViewModel(incidentTrainIdsSet);
+
+                await Clients.Caller.SendAsync("ReceiveTrain", viewModel, trainLifetime, Context.ConnectionAborted);
+
+                //remove train after being sent
+                remainingTrains.Remove(train);
+
+                // schedule train removal after a random lifetime
+                _ = Task.Run(async () =>
+                {
+                    await Task.Delay(trainLifetime, Context.ConnectionAborted);
+
+                    // send train remove notification if the connection is still active
+                    if (!Context.ConnectionAborted.IsCancellationRequested)
+                    {
+                        await Clients.Caller.SendAsync("RemoveTrain", viewModel.TrainId, Context.ConnectionAborted);
+                    }
+                }, Context.ConnectionAborted);
+            }
+
+            isFirstIteration = false;
         }
-    }
-
-    /// <summary>
-    /// Broadcasts a train incident notification to all connected SignalR clients.
-    /// </summary>
-    /// <param name="trainId">The ID of the train for which the incident was added.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    public async Task BroadcastIncident(string trainId)
-    {
-        await Clients.All.SendAsync("IncidentAdded", trainId);
     }
 }

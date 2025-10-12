@@ -85,17 +85,6 @@ body {
         transform: translateY(-3px);
     }
 
-.table .thead-dark th {
-    color: #fff;
-    background-color: #212529;
-    border-color: #32383e;
-}
-
-.bg-danger th, .bg-danger td {
-    background-color: #dc3545 !important;
-    color: #fff;
-}
-
 .display-table .bg-grey-light {
     background-color: rgba(0, 0, 0, .05);
 }
@@ -118,8 +107,52 @@ body {
     border-top: 0px !important;
 }
 
-.bg-danger.border-top {
-    border-top: #8b3840 !important;
+.top-header.row {
+    font-weight: bold;
+}
+
+.train-row {
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+}
+
+    .train-row.bg-danger {
+        color: #fff;
+        background-color: #b25c5c !important;
+    }
+
+    .train-row .col-1, .train-row .col-2,
+    .train-row .col-3, .train-row .col-4 {
+        position: relative;
+        z-index: 1; /* keeps text above progress */
+    }
+
+.bg-danger .progress-fill {
+    background-color: #8b3840;
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    transition: width 0.05s linear;
+    z-index: 0;
+    background-color: #d9d9d9;
+}
+
+#train-rows-content > .border-top:first-child {
+    border-top: none !important;
+}
+
+.bg-danger.border-start {
+    border-left-color: #8b3840 !important;
+}
+
+.bg-danger.border-end {
+    border-right-color: #b25c5c !important;
 }
 
 .form-control.input-validation-error {
@@ -128,11 +161,6 @@ body {
 
 .display-table .btn.btn-no-incidents {
     pointer-events: none;
-}
-
-#loading-message {
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 
 .add-incident-modal .train-number-heading {
