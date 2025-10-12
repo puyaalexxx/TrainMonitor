@@ -122,8 +122,7 @@ body {
         background-color: #b25c5c !important;
     }
 
-    .train-row .col-1, .train-row .col-2,
-    .train-row .col-3, .train-row .col-4 {
+    .train-row .train-col {
         position: relative;
         z-index: 1; /* keeps text above progress */
     }
@@ -169,4 +168,43 @@ body {
 
 .add-incident-modal .incident-success {
     margin-bottom: 0;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .train-row {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+        .top-header > .train-col, .train-row > .train-col {
+            padding-left: 5px;
+            padding-right: 5px;
+            text-align: center;
+        }
+}
+
+@media (max-width: 767px) {
+    .top-header.row, div#train-rows-content,
+    .train-rows-content {
+        text-align: center;
+    }
+
+    .train-col {
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+
+    .display-table .btn {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+
+    .train-add-incident {
+        margin-top: 5px;
+    }
+
+    .train-row:not(.bg-danger) .train-add-incident,
+    .train-row:not(.bg-danger) .train-incident-history {
+        display: none;
+    }
 }

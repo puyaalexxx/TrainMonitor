@@ -11,22 +11,24 @@
     <div class="display-table border-bottom">
         <!-- Header -->
         <div class="top-header row bg-dark font-weight-bold py-2 text-white">
-            <div class="col-2">#</div>
-            <div class="col-3">Username</div>
-            <div class="col-3">Reason</div>
-            <div class="col-4">Additional Comment</div>
+            <div class="train-col col-12 col-md-2">#</div>
+            <div class="train-col col-12 col-md-3">Username</div>
+            <div class="train-col col-12 col-md-3">Reason</div>
+            <div class="train-col col-12 col-md-4">Additional Comment</div>
         </div>
 
         <!-- Rows -->
-        @foreach (var (incident, index) in Model.Select((value, i) => (value, i)))
-        {
-            <div class="row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
-                <div class="col-2">@(index + 1)</div>
-                <div class="col-3">@incident.Username</div>
-                <div class="col-3">@incident.Reason</div>
-                <div class="col-4">@incident.Comment</div>
-            </div>
-        }
+        <div class="train-rows-content">
+            @foreach (var (incident, index) in Model.Select((value, i) => (value, i)))
+            {
+                <div class="train-row row py-2 text-decoration-none text-dark bg-grey-light border-end border-start border-top">
+                    <div class="train-col col-12 col-md-2">@(index + 1)</div>
+                    <div class="train-col col-12 col-md-3">@incident.Username</div>
+                    <div class="train-col col-12 col-md-3">@incident.Reason</div>
+                    <div class="train-col col-12 col-md-4">@incident.Comment</div>
+                </div>
+            }
+        </div>
     </div>
 }
 else
