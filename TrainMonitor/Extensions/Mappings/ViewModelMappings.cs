@@ -1,8 +1,9 @@
 ﻿using TrainMonitor.Helpers;
 using TrainMonitor.Helpers.Json;
 using TrainMonitor.Models;
+using TrainMonitor.ViewModels;
 
-namespace TrainMonitor.ViewModels;
+namespace TrainMonitor.Extensions.Mappings;
 
 internal static class ViewModelMappings
 {

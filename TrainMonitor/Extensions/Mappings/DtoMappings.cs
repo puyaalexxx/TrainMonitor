@@ -1,10 +1,11 @@
 ﻿// Ignore Spelling: Dto
 
+using TrainMonitor.DTOs;
 using TrainMonitor.ViewModels;
 
-namespace TrainMonitor.DTOs;
+namespace TrainMonitor.Extensions.Mappings;
 
-internal static class Mappings
+internal static class DtoMappings
 {
     /// <summary>
     /// Converts an <see cref="AddIncidentViewModel"/> to an <see cref="AddIncidentDto"/>.

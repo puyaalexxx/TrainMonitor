@@ -3,6 +3,7 @@
 using TrainMonitor.Data.Repositories;
 using TrainMonitor.DTOs;
 using TrainMonitor.Exceptions;
+using TrainMonitor.Extensions.Mappings;
 using TrainMonitor.Helpers;
 using TrainMonitor.Models;
 
@@ -71,13 +72,8 @@ public sealed class TrainService : ITrainService
 
     public async Task AddIncidentAsync(AddIncidentDto dto, CancellationToken cancellationToken = default)
     {
-        var incident = new Incident
-        {
-            TrainId = dto.TrainId,
-            Username = dto.Username,
-            Reason = dto.Reason,
-            AdditionalComment = dto.Comment
-        };
+        //map Train to AddIncidentDto
+        var incident = dto.ToModel();
 
         await _trainRepository.AddIncidentAsync(incident, cancellationToken);
     }

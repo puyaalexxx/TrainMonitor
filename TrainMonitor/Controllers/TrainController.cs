@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TrainMonitor.DTOs;
+using TrainMonitor.Extensions.Mappings;
 using TrainMonitor.Helpers;
 using TrainMonitor.Services;
 using TrainMonitor.ViewModels;
