@@ -29,6 +29,13 @@ public sealed class TrainService : ITrainService
         return incidentTrainIds;
     }
 
+    public async Task<bool> HasIncidentAsync(string trainID, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(trainID)) return false;
+
+        return await _trainRepository.HasIncidentAsync(trainID, cancellationToken);
+    }
+
     public async Task<Train?> GetOrCreateTrainAsync(string trainID, CancellationToken cancellationToken = default)
     {
         //check if train exists in DB
@@ -53,7 +60,6 @@ public sealed class TrainService : ITrainService
             throw new InvalidIdException($"Invalid Train ID: {trainID}");
         }
 
-        // check if train exists
         var trainExists = await _trainRepository.TrainExistsAsync(trainID, cancellationToken);
         if (!trainExists)
         {

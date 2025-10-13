@@ -11,9 +11,9 @@ internal static class ViewModelMappings
     /// Converts a <see cref="TrainJson"/> object to a <see cref="TrainViewModel"/>,
     /// </summary>
     /// <param name="train">The <see cref="TrainJson"/> to convert.</param>
-    /// <param name="incidentTrainIdsSet">A set of train IDs that have incidents.</param>
+    /// <param name="hasIncident">A boolean value if train has incidents.</param>
     /// <returns>The mapped <see cref="TrainViewModel"/>.</returns>
-    public static TrainViewModel ToViewModel(this TrainJson train, HashSet<string> incidentTrainIdsSet)
+    public static TrainViewModel ToViewModel(this TrainJson train, bool hasIncident)
     {
         return new TrainViewModel
         {
@@ -25,8 +25,7 @@ internal static class ViewModelMappings
             NextStation = train.ReturnValue.NextStop?.Title ?? string.Empty,
             // check delay time to be bigger than 10 minutes
             HasDelay = train.ReturnValue.DelayTime > 10,
-            // check if the train has incident saved in the database
-            HasIncident = incidentTrainIdsSet.Contains(train.ReturnValue.TrainId),
+            HasIncident = hasIncident,
         };
     }
 

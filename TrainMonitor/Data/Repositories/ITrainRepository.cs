@@ -10,6 +10,8 @@ public interface ITrainRepository
 
     Task<List<string>> GetTrainIdsWithIncidentsAsync(IEnumerable<string> trainIds, CancellationToken cancellationToken = default);
 
+    Task<bool> HasIncidentAsync(string trainID, CancellationToken cancellationToken = default);
+
     Task AddAsync(Train train, CancellationToken cancellationToken = default);
 
     Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default);

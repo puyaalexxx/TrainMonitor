@@ -17,7 +17,6 @@ public static class TrainUtils
     /// <returns>Concatenated error messages or a default message.</returns>
     public static string CollectFormErrors(ModelStateDictionary modelState)
     {
-        // Collect all errors into a single list
         var allErrors = modelState.Values
             .Where(v => v?.Errors.Any() == true)
             .SelectMany(v => v.Errors)

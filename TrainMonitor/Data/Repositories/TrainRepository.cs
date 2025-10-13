@@ -23,6 +23,9 @@ public class TrainRepository : ITrainRepository
             .Distinct()
             .ToListAsync(cancellationToken);
 
+    public Task<bool> HasIncidentAsync(string trainID, CancellationToken cancellationToken = default) =>
+        _context.Incidents.AsNoTracking().AnyAsync(i => i.TrainId == trainID, cancellationToken);
+
     public Task AddAsync(Train train, CancellationToken cancellationToken = default) =>
         _context.Trains.AddAsync(train, cancellationToken).AsTask();
 

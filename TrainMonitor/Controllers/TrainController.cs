@@ -64,7 +64,6 @@ public class TrainController : Controller
 
         ViewBag.Title = "All Incidents";
 
-        // 3. Pass the model to the view
         return View("Incidents", model);
     }
 
@@ -86,7 +85,6 @@ public class TrainController : Controller
             return Json(new { success = false, errors });
         }
 
-        //check if train exists in DB, if not create it
         var train = await _trainService.GetOrCreateTrainAsync(viewModel.TrainId, cancellationToken);
 
         if (train == null)

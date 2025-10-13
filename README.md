@@ -18,7 +18,7 @@
 - Bootstrap 5 for styling
 - FontAwesome for icons
 - CSS for styling
-- rrrr
+- Responsive design
 - JavaScript for interactivity
 - jQuery for DOM manipulation and Form validation
 - Ajax for asynchronous requests
@@ -27,4 +27,4 @@
 - ViewModel for passing data to views
 - DTOs for data transfer between layers
 - SignalR for real-time web functionality
-- SignalR notifications for real-time updates
+- SignalR notifications for real-time updates from the client and server

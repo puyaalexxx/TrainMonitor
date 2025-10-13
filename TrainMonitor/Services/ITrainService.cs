@@ -17,6 +17,17 @@ public interface ITrainService
     Task<IEnumerable<string>> GetTrainIdsWithIncidentsAsync(IEnumerable<string> trainIds, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Checks whether a train currently has any incidents saved in DB.
+    /// </summary>
+    /// <param name="trainID">The ID of the train to check for incidents.</param>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
+    /// <returns>
+    /// <c>true</c> if the train has at least one incident; 
+    /// <c>false</c> if the train has no incidents or if <paramref name="trainID"/> is null, empty, or whitespace.
+    /// </returns>
+    Task<bool> HasIncidentAsync(string trainID, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Checks if a train with the specified <paramref name="trainId"/> exists in the database.
     /// If it does not exist, verifies if the trainID exists in the JSON file.
     /// If found in the JSON file, saves the train data to the database.

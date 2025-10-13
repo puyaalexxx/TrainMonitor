@@ -17,8 +17,6 @@
 
             // Receive a single train from the server
             connection.on("ReceiveTrain", (train, trainLifetime) => {
-                //console.log("Train received:", train);
-
                 //remove loader
                 $("#loading-message").remove();
 
@@ -26,7 +24,6 @@
 
                 // Append to the train container
                 $rowHTML.hide().prependTo('#train-rows-content').fadeIn(400);
-
 
                 this.showProgressBarBackground($rowHTML, trainLifetime);
             });
@@ -48,7 +45,8 @@
             //call StartStreaming method from TrainHub
             connection.start().then(() => {
                 console.log("Connected to TrainHub");
-                connection.invoke("StartStreaming").catch(err => console.error(err.toString()));
+
+                connection.send("StartStreaming").catch(err => console.error(err.toString()));
             });
 
             connection.onclose(async () => {
@@ -114,7 +112,6 @@
                 success: (response) => {
 
                     if (response.success) {
-
                         //set success area message
                         const $success = $form.siblings('.incident-success');
                         $success.text(response.message).removeClass('d-none');
