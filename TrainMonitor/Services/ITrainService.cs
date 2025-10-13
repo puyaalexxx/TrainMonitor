@@ -36,8 +36,14 @@ public interface ITrainService
     /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
     /// <returns>A <see cref="List{Incident}"/> containing all incidents for the specified train. Returns an empty list if there are no incidents.</returns>
     /// <exception cref="InvalidIdException">Thrown when <paramref name="trainID"/> is null, empty, or whitespace.</exception>
-
     Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Get all trains that have at least one incident, including their associated incidents.
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
+    /// <returns>A list of trains and their associated incidents</returns>
+    Task<List<Train>> GetTrainsWithIncidentsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds an incident to a specific train.

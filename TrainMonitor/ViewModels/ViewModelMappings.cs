@@ -44,4 +44,20 @@ internal static class ViewModelMappings
             Comment = incident.AdditionalComment
         };
     }
+
+    /// <summary>
+    /// Converts a <see cref="Train"/> to a <see cref="TrainsWithIncidentsViewModel"/>.
+    /// </summary>
+    /// <param name="train">The train object to convert.</param>
+    /// <returns>The mapped <see cref="TrainsWithIncidentsViewModel"/>.</returns>
+    public static TrainsWithIncidentsViewModel ToViewModel(this Train train)
+    {
+        return new TrainsWithIncidentsViewModel
+        {
+            TrainId = train.Id,
+            TrainNumber = train.TrainNumber,
+            TrainName = train.TrainName,
+            Incidents = train.Incidents.Select(i => i.ToViewModel()).ToList()
+        };
+    }
 }

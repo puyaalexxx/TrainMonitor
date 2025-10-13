@@ -62,6 +62,13 @@ public sealed class TrainService : ITrainService
         return await _trainRepository.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
     }
 
+    public async Task<List<Train>> GetTrainsWithIncidentsAsync(CancellationToken cancellationToken = default)
+    {
+        var allIncidents = await _trainRepository.GetTrainsWithIncidentsAsync(cancellationToken);
+
+        return allIncidents;
+    }
+
     public async Task AddIncidentAsync(AddIncidentDto dto, CancellationToken cancellationToken = default)
     {
         var incident = new Incident

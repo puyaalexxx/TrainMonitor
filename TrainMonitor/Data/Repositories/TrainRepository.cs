@@ -29,6 +29,10 @@ public class TrainRepository : ITrainRepository
     public Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default) =>
         _context.Incidents.AsNoTracking().Where(i => i.TrainId == trainID).ToListAsync(cancellationToken);
 
+    public Task<List<Train>> GetTrainsWithIncidentsAsync(CancellationToken cancellationToken = default) =>
+        _context.Trains.Include(t => t.Incidents).Where(t => t.Incidents.Any()).ToListAsync(cancellationToken);
+
+
     public Task AddIncidentAsync(Incident incident, CancellationToken cancellationToken = default) =>
         _context.Incidents.AddAsync(incident, cancellationToken).AsTask();
 

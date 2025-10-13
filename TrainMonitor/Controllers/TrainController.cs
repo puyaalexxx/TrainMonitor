@@ -49,17 +49,23 @@ public class TrainController : Controller
         return View("TrainIncidents", model);
     }
 
+    /// <summary>
+    /// Handles GET requests to "/trains/incidents".
+    /// </summary>
+    /// <param name="cancellationToken">Token to cancel the operation if needed.</param>
+    /// <returns>A view displaying the trains that have incidents and their respective incidents.</returns>
     [HttpGet("/incidents")]
-    public async Task<IActionResult> GetAllIncidents(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTrainsWithIncidents(CancellationToken cancellationToken)
     {
-        //var incidents = await _trainService.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
+        var trainsWithIncidents = await _trainService.GetTrainsWithIncidentsAsync(cancellationToken);
 
-        //map a collection of Incident objects to a list of IncidentViewModel
-        // var model = incidents.Select(i => i.ToViewModel()).ToList();
+        //map a collection of Train objects to a list of TrainsWithIncidentsViewModel
+        var model = trainsWithIncidents.Select(train => train.ToViewModel()).ToList();
 
         ViewBag.Title = "All Incidents";
 
-        return View("Incidents");
+        // 3. Pass the model to the view
+        return View("Incidents", model);
     }
 
     /// <summary>

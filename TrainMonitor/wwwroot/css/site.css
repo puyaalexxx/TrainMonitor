@@ -114,10 +114,10 @@ body {
 .train-row {
     position: relative;
     overflow: hidden;
-    padding: 10px;
 }
 
-    .train-row.bg-danger {
+    .train-row.bg-danger,
+    .all-incidents .bg-danger {
         color: #fff;
         background-color: #b25c5c !important;
     }
@@ -170,10 +170,22 @@ body {
     margin-bottom: 0;
 }
 
+.all-incidents .card-header {
+    border: none !important;
+}
+
+.all-incidents.card {
+    border: none;
+}
+
+.all-incidents .text-danger {
+    color: #b25c5c !important;
+}
+
 @media (min-width: 768px) and (max-width: 991px) {
     .train-row {
-        padding-left: 3px;
-        padding-right: 3px;
+        padding-left: 0px;
+        padding-right: 0px;
     }
 
         .top-header > .train-col, .train-row > .train-col {

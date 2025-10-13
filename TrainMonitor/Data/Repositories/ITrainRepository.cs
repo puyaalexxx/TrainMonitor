@@ -14,6 +14,8 @@ public interface ITrainRepository
 
     Task<List<Incident>> GetIncidentsByTrainIdAsync(string trainID, CancellationToken cancellationToken = default);
 
+    Task<List<Train>> GetTrainsWithIncidentsAsync(CancellationToken cancellationToken = default);
+
     Task AddIncidentAsync(Incident incident, CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
