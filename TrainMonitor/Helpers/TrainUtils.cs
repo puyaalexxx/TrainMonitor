@@ -88,4 +88,19 @@ public static class TrainUtils
             .Select(t => t.ReturnValue.TrainId)
             .ToList();
     }
+
+    /// <summary>
+    /// Format delay time.
+    /// </summary>
+    /// <param name="delayTime">delay time in minutes</param>
+    /// <returns>The formatted delayTime.</returns>
+    public static string FormatDelayTime(int delayTime)
+    {
+        return delayTime switch
+        {
+            0 => "",
+            1 => "1 min",
+            _ => $"{delayTime} mins"
+        };
+    }
 }
