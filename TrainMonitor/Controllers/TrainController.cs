@@ -46,7 +46,20 @@ public class TrainController : Controller
 
         ViewBag.Title = "Train Incidents";
 
-        return View("Incidents", model);
+        return View("TrainIncidents", model);
+    }
+
+    [HttpGet("/incidents")]
+    public async Task<IActionResult> GetAllIncidents(CancellationToken cancellationToken)
+    {
+        //var incidents = await _trainService.GetIncidentsByTrainIdAsync(trainID, cancellationToken);
+
+        //map a collection of Incident objects to a list of IncidentViewModel
+        // var model = incidents.Select(i => i.ToViewModel()).ToList();
+
+        ViewBag.Title = "All Incidents";
+
+        return View("Incidents");
     }
 
     /// <summary>
