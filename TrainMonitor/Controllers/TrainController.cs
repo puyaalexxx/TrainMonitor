@@ -77,7 +77,7 @@ public class TrainController : Controller
     /// <returns>A JSON response indicating success or failure, along with any error messages.</returns>
     [HttpPost("addIncident")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddIncident(AddIncidentViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddIncident(AddIncidentViewModel viewModel, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -87,19 +87,19 @@ public class TrainController : Controller
         }
 
         //check if train exists in DB, if not create it
-        var train = await _trainService.GetOrCreateTrainAsync(model.TrainId, cancellationToken);
+        var train = await _trainService.GetOrCreateTrainAsync(viewModel.TrainId, cancellationToken);
 
         if (train == null)
-            return Json(new { success = false, errors = $"Invalid Train ID: {model.TrainId}" });
+            return Json(new { success = false, errors = $"Invalid Train ID: {viewModel.TrainId}" });
 
         //add incident to current train
-        await _trainService.AddIncidentAsync(model.ToDto(), cancellationToken);
+        await _trainService.AddIncidentAsync(viewModel.ToDto(), cancellationToken);
 
         //commit all changes in one transaction
         await _trainService.SaveChangesAsync(cancellationToken);
 
         //notify all connected SignalR clients about the new incident
-        await _notificationService.BroadcastIncidentAsync(model.TrainId);
+        await _notificationService.BroadcastIncidentAsync(viewModel.TrainId);
 
         return Ok(new { success = true, message = "Incident saved successfully!" });
     }

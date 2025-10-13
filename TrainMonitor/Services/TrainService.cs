@@ -65,17 +65,12 @@ public sealed class TrainService : ITrainService
 
     public async Task<List<Train>> GetTrainsWithIncidentsAsync(CancellationToken cancellationToken = default)
     {
-        var allIncidents = await _trainRepository.GetTrainsWithIncidentsAsync(cancellationToken);
-
-        return allIncidents;
+        return await _trainRepository.GetTrainsWithIncidentsAsync(cancellationToken);
     }
 
     public async Task AddIncidentAsync(AddIncidentDto dto, CancellationToken cancellationToken = default)
     {
-        //map Train to AddIncidentDto
-        var incident = dto.ToModel();
-
-        await _trainRepository.AddIncidentAsync(incident, cancellationToken);
+        await _trainRepository.AddIncidentAsync(dto.ToModel(), cancellationToken);
     }
 
     public Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
